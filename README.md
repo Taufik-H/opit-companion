@@ -2,25 +2,41 @@
   <img src="assets/icon.png" width="128" height="128" alt="OPIT Companion Logo" />
 </p>
 
-<h1 align="center">👾 OPIT Companion</h1>
+<h1 align="center">OPIT Companion</h1>
 
-> **Your Tiny Coding Companion**  
-> A lively pixel-art companion that lives inside your code editor, reacting dynamically to every keystroke, shortcut, and error right beside your cursor.
+<p align="center">
+  <strong>Your Tiny Coding Companion</strong><br>
+  <em>A lively, reactive pixel-art companion that lives inside your code editor, reacting dynamically to every keystroke, shortcut, and error right beside your cursor.</em>
+</p>
+
+<p align="center">
+  <a href="https://marketplace.visualstudio.com/items?itemName=Taufik-H.opit-companion"><img src="https://img.shields.io/visual-studio-marketplace/v/Taufik-H.opit-companion.svg?style=flat-square&color=6366f1" alt="Marketplace Version"></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=Taufik-H.opit-companion"><img src="https://img.shields.io/visual-studio-marketplace/i/Taufik-H.opit-companion.svg?style=flat-square&color=34d399" alt="Installs"></a>
+  <a href="https://github.com/Taufik-H/opit-companion/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License"></a>
+</p>
+
+<p align="center">
+  <img src="demo/01-full-walkthrough-demo.gif" width="100%" alt="OPIT Companion Live Walkthrough" />
+</p>
 
 ---
 
-## 📖 About OPIT Companion
+## 📖 Overview
 
-Coding can be intense and solitary. **OPIT Companion** transforms your daily coding routine by placing an expressive, animated companion directly into your text editor. 
+Coding can be intense and solitary. **OPIT Companion** transforms your daily coding routine by placing an expressive, animated sprite directly into your text editor.
 
-As you write code, OPIT stays by your cursor—sprinting when you type fast, celebrating when you save, slashing when you delete, and reacting when errors appear. It is designed to be lightweight, fluid, and delightful without getting in the way of your productivity.
+As you write code, OPIT stays right by your cursor—sprinting when you type fast, celebrating when you save, slashing when you delete, and reacting when errors appear. It is designed to be lightweight, fluid, and delightful without getting in the way of your productivity.
 
 ---
 
-## 🌟 Key Functions & Reactions
+## ✨ Features & Action Showcase
 
-### 🎮 Keystroke & Editor Reactions
-OPIT actively observes your editor actions and reacts in real time:
+### 🏃 Keystroke & Editor Reactions
+OPIT actively observes your editor actions and reacts in real time with continuous physics momentum:
+
+<p align="center">
+  <img src="demo/02-typing-reaction-preview.gif" width="100%" alt="Keystroke Reactions Demo" />
+</p>
 
 | Action | OPIT Reaction | What Happens |
 | :--- | :--- | :--- |
@@ -35,38 +51,42 @@ OPIT actively observes your editor actions and reacts in real time:
 
 ---
 
-### 🎨 Character Skins & Variety
-Choose from distinct hero characters, each with their own color theme and personality:
+### 🎭 Live Character Switching
+Choose from distinct hero characters, each with their own theme color, personality, and animations:
+
+<p align="center">
+  <img src="demo/03-character-selection-and-actions.gif" width="100%" alt="Character Switching Demo" />
+</p>
+
 - 🌸 **Pink Monster**: Energetic and playful companion.
 - 🔷 **Blue Hero**: Sleek and focused warrior.
-- 🤍 **White Hero**: Minimalist and calm paladin.
+- 🤍 **White Chocobo**: Minimalist and calm paladin.
 
 ---
 
-### 🎛️ Interactive Control Dashboard
+### 🎛️ Control Deck & Customization
 Access the companion control center from the **Activity Bar** (left sidebar):
+
+<p align="center">
+  <img src="demo/05-sidebar-settings-customization.gif" width="100%" alt="Sidebar Customization Demo" />
+</p>
+
 - **Live Character Selector**: Browse skins with continuous step-animated previews.
-- **Display Size Slider**: Scale your companion from subtle (16px) to bold (48px) to fit your font and line height.
-- **Animation Speed Slider**: Adjust animation tempo from chill (0.5x) to hyperactive (2.5x).
-- **Show / Hide Native Cursor Switch**: Choose whether to keep the standard text cursor or let OPIT be your main cursor guide.
-- **Test Reactions Panel**: One-click preview buttons to trigger save, error, slash, jump, and poof animations anytime.
+- **Display Size Slider**: Scale your companion from subtle (16px) to bold (40px) to fit your font and line height.
+- **Animation Speed Slider**: Adjust animation tempo from chill (0.5x) to hyperactive (2.0x).
+- **Native Cursor Toggle**: Choose whether to keep the standard text cursor or let OPIT be your main cursor guide.
+- **Test Actions Panel**: One-click preview buttons to trigger save, error, slash, jump, squat, and poof animations anytime.
 
 ---
 
+### 🔍 Precision Cursor Tracking & Idle
+60 FPS ultra-smooth momentum physics that stays locked beside your text cursor without layout jitter:
+
+<p align="center">
+  <img src="demo/06-cursor-companion-closeup.gif" width="100%" alt="Cursor Tracking Close-up Demo" />
+</p>
+
 ---
-
-## 🎬 Video Showcase & Demos
-
-Watch OPIT Companion in action across different coding workflows:
-
-| Demo Video | Action / Feature | Highlights |
-| :--- | :--- | :--- |
-| 📺 [**01-full-walkthrough-demo.mov**](demo/01-full-walkthrough-demo.mov) | **Full Walkthrough** | Complete overview: live coding, cursor following, and sidebar panel |
-| 📺 [**02-typing-reaction-preview.mov**](demo/02-typing-reaction-preview.mov) | **Keystroke Reactions** | Real-time sprint, slash delete attack, and line-jump reactions |
-| 📺 [**03-character-selection-and-actions.mov**](demo/03-character-selection-and-actions.mov) | **Character Selection** | Live switching across **Blue Hero**, **Pink Monster**, and **White Chocobo** |
-| 📺 [**04-reaction-test-actions.mov**](demo/04-reaction-test-actions.mov) | **Test Actions Deck** | Instant manual triggers for Save, Error, Slash, Jump, Squat, and Poof |
-| 📺 [**05-sidebar-settings-customization.mov**](demo/05-sidebar-settings-customization.mov) | **Sidebar Customization** | Live sprite scaling (`16px`-`40px`), speed multiplier, and cursor switch |
-| 📺 [**06-cursor-companion-closeup.mov**](demo/06-cursor-companion-closeup.mov) | **Cursor Tracking Close-up** | 60 FPS ultra-smooth momentum physics and idle breathing loop |
 
 ## 🚀 How to Use
 
@@ -84,7 +104,7 @@ Watch OPIT Companion in action across different coding workflows:
 
 ### 3. Adjusting Cursor & Sizing
 - In the sidebar dashboard, adjust the **Display Size** slider to align the sprite with your editor's line height.
-- Toggle the **Show Native Cursor** switch to customize your cursor visibility.
+- Toggle the **Native Cursor** switch to customize your cursor visibility.
 - Click **Apply settings** to optimize your editor typography and cursor alignment.
 
 ---
@@ -116,7 +136,7 @@ You can adjust settings via the Sidebar Dashboard or directly in your `settings.
   "opit.animationSpeed": 1.0,
 
   // Show or hide native text cursor alongside OPIT
-  "opit.showCursor": true
+  "opit.showCursor": false
 }
 ```
 
@@ -151,4 +171,4 @@ This project follows **Semantic Versioning (SemVer 2.0)**. Updates and releases 
 
 ## 📄 License
 
-MIT License © 2026 OPIT Companion. Built for coders who love a little companionship in their editor! 👾✨
+MIT License © 2026 OPIT Companion. Built with ❤️ for coders who love a little companionship in their editor! 👾✨
