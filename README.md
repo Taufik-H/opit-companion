@@ -1,106 +1,117 @@
 # 👾 OPIT Companion
 
-> **Your tiny coding companion.**  
-> A lively, reactive inline sprite character living right beside your text cursor in VS Code, Cursor, Windsurf, VSCodium, and more.
+> **Your Tiny Coding Companion**  
+> A lively pixel-art companion that lives inside your code editor, reacting dynamically to every keystroke, shortcut, and error right beside your cursor.
 
 ---
 
-## ✨ Features
+## 📖 About OPIT Companion
 
-- **🐾 Real-time Cursor Following**: Smooth 60 FPS physics momentum engine that dashes, walks, and follows your cursor wherever you code.
-- **🎭 Multi-Character Skins**: Includes **Pink Monster**, **Blue Hero**, and **White Hero** with extensible custom character JSON manifests.
-- **⚡ 20+ Interactive Keyboard Reactions**:
-  - 🏃 Fast typing sprints & steady typing strides
-  - ⚔️ Backspace attacks & bulk-deletion slashes
-  - 💥 Enter jumps & newline drops
-  - 🎉 Command-S / Save leap celebration
-  - ⬇️ Stuck at bottom squat & Left edge wall bump
-  - 💨 Mouse teleportation poof
-  - 🤒 Real-time linter error diagnostics reaction
-- **🎛️ Interactive Sidebar Panel**:
-  - Horizontal character selector cards with live step-animated previews
-  - Instant display size & animation speed sliders
-  - **Show / Hide Native Cursor** live toggle switch
-  - One-click clean cursor calibration
-- **🌐 Universal Multi-IDE Support**:
-  - Automatically calibrates across VS Code, Cursor, Windsurf, VSCodium, and Zed.
-  - Generates and synchronizes `.editorconfig` and `.prettierrc` for universal formatting standards.
+Coding can be intense and solitary. **OPIT Companion** transforms your daily coding routine by placing an expressive, animated companion directly into your text editor. 
+
+As you write code, OPIT stays by your cursor—sprinting when you type fast, celebrating when you save, slashing when you delete, and reacting when errors appear. It is designed to be lightweight, fluid, and delightful without getting in the way of your productivity.
 
 ---
 
-## 🚀 Quickstart
+## 🌟 Key Functions & Reactions
 
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Taufik-H/opit-companion.git
-   cd opit-companion
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Compile & build:
-   ```bash
-   npm run build
-   ```
-4. Press `F5` in VS Code to launch the Extension Development Host.
+### 🎮 Keystroke & Editor Reactions
+OPIT actively observes your editor actions and reacts in real time:
 
----
-
-## 🎮 Commands & Shortcuts
-
-| Command | Title | Description |
+| Action | OPIT Reaction | What Happens |
 | :--- | :--- | :--- |
-| `opit.changeVariant` | **OPIT: Change Character Skin** | Opens quick-pick to select companion skin |
-| `opit.applySettings` | **OPIT: Apply Cursor Settings** | Applies global cursor & editor calibration |
-| `opit.testSave` | **OPIT: Trigger Test Save** | Simulates celebration save reaction |
-| `opit.testError` | **OPIT: Trigger Test Error** | Simulates sick/error diagnostic reaction |
+| **Typing** | 🏃 **Sprint / Dash** | Runs alongside your cursor as you type |
+| **Fast Typing** | ⚡ **Speed Sprint** | Accelerates into high-speed momentum when typing rapidly |
+| **Backspace / Delete** | ⚔️ **Slash Attack** | Swings weapon and slashes away deleted characters |
+| **Enter / Newline** | 💥 **Jump & Drop** | Leaps into the air and lands gracefully on the new line |
+| **Save (`Cmd+S` / `Ctrl+S`)** | 🎉 **Celebration** | Jumps in joy with celebratory stars when files are saved |
+| **Code Errors / Linter** | 🤒 **Sick / Dizzy** | Shows a dizzy, sick reaction when syntax errors are detected |
+| **Mouse Click / Jump** | 💨 **Poof Teleport** | Disappears with smoke and materializes at the clicked position |
+| **Bumping Boundaries** | 🧱 **Wall Bump & Squat** | Bumps into the left wall or squats when reaching the bottom |
 
 ---
 
-## ⚙️ Configuration Settings
+### 🎨 Character Skins & Variety
+Choose from distinct hero characters, each with their own color theme and personality:
+- 🌸 **Pink Monster**: Energetic and playful companion.
+- 🔷 **Blue Hero**: Sleek and focused warrior.
+- 🤍 **White Hero**: Minimalist and calm paladin.
 
-Customize your companion in **Settings (`settings.json`)** or via the **OPIT Dashboard** in the Activity Bar:
+---
+
+### 🎛️ Interactive Control Dashboard
+Access the companion control center from the **Activity Bar** (left sidebar):
+- **Live Character Selector**: Browse skins with continuous step-animated previews.
+- **Display Size Slider**: Scale your companion from subtle (16px) to bold (48px) to fit your font and line height.
+- **Animation Speed Slider**: Adjust animation tempo from chill (0.5x) to hyperactive (2.5x).
+- **Show / Hide Native Cursor Switch**: Choose whether to keep the standard text cursor or let OPIT be your main cursor guide.
+- **Test Reactions Panel**: One-click preview buttons to trigger save, error, slash, jump, and poof animations anytime.
+
+---
+
+## 🚀 How to Use
+
+### 1. Opening the OPIT Dashboard
+1. Look at the **Activity Bar** on the left side of your editor.
+2. Click on the **OPIT Companion** icon (👾).
+3. The dashboard will open, showing your active character and customizable controls.
+
+### 2. Changing Companion Skin
+- **Via Dashboard**: Simply click on any character card in the sidebar grid.
+- **Via Command Palette**:
+  1. Press `Cmd + Shift + P` (Mac) or `Ctrl + Shift + P` (Windows/Linux).
+  2. Type and select `OPIT: Change Character Skin`.
+  3. Pick your preferred companion from the list.
+
+### 3. Adjusting Cursor & Sizing
+- In the sidebar dashboard, adjust the **Display Size** slider to align the sprite with your editor's line height.
+- Toggle the **Show Native Cursor** switch to customize your cursor visibility.
+- Click **✨ Apply Clean Cursor Settings** to optimize your editor typography and cursor alignment.
+
+---
+
+## ⌨️ Available Commands
+
+| Command | Action |
+| :--- | :--- |
+| `OPIT: Change Character Skin` | Open quick selector to switch companion skin |
+| `OPIT: Apply Cursor Settings` | Calibrate cursor styling across your editor windows |
+| `OPIT: Trigger Test Save Reaction` | Trigger celebratory save jump animation |
+| `OPIT: Trigger Test Error Reaction` | Trigger diagnostic error reaction |
+
+---
+
+## ⚙️ Configuration Options
+
+You can adjust settings via the Sidebar Dashboard or directly in your `settings.json`:
 
 ```json
 {
+  // Chosen character skin: "pink", "blue", or "white"
   "opit.variant": "pink",
+
+  // Sprite display size in pixels (default: 22)
   "opit.displaySize": 22,
+
+  // Speed multiplier for animations (default: 1.0)
   "opit.animationSpeed": 1.0,
+
+  // Show or hide native text cursor alongside OPIT
   "opit.showCursor": true
 }
 ```
 
 ---
 
-## 📦 Automated Versioning (SemVer 2.0)
+## 🏷️ Versioning & Releases
 
-This repository uses automated **Semantic Versioning** via GitHub Actions on every push to `main`. Version increments are determined automatically based on **Conventional Commits**:
-
-| Commit Prefix | SemVer Release Type | Example Transition |
-| :--- | :--- | :--- |
-| `fix:` or `fix(...):` | **PATCH** (Bug fixes & minor patches) | `v0.1.0` $\rightarrow$ `v0.1.1` |
-| `feat:` or `feat(...):` | **MINOR** (New features & enhancements) | `v0.1.0` $\rightarrow$ `v0.2.0` |
-| `feat!:` or `BREAKING CHANGE:` | **MAJOR** (Breaking structural changes) | `v0.1.0` $\rightarrow$ `v1.0.0` |
-| `docs:`, `chore:`, `style:` | **SKIP / NO BUMP** | Version stays unchanged |
-
-### Automated Workflow Pipeline
-1. When you push a commit with a Conventional Commit message to `main`:
-2. GitHub Actions analyzes the commit history since the last tag.
-3. Automatically computes the next version, updates `package.json`, creates a Git tag (`vX.Y.Z`), and generates a GitHub Release with an automated changelog.
-
----
-
-## 🛠️ Tech Stack & Architecture
-
-- **Runtime**: TypeScript & VS Code Extension API
-- **Bundler**: `esbuild` for lightning-fast sub-millisecond builds
-- **Rendering**: SVG ViewBox Data-URI Dynamic Sprite Viewport & Text Editor Decorations
-- **State Management**: Reactive Observer with 60 FPS Exponential Friction Decay
+This project follows **Semantic Versioning (SemVer 2.0)**. Updates and releases are categorized as:
+- **Patch (`v0.1.X`)**: Bug fixes, sprite offset calibrations, and stability tweaks.
+- **Minor (`v0.X.0`)**: New companion skins, animations, and dashboard features.
+- **Major (`vX.0.0`)**: Large-scale evolutions and architectural updates.
 
 ---
 
 ## 📄 License
 
-MIT License © 2026 OPIT Companion Team.
+MIT License © 2026 OPIT Companion. Built for coders who love a little companionship in their editor! 👾✨
