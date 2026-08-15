@@ -1,0 +1,9 @@
+{
+  "version": "2.0.0",
+  "frameSize": {
+    "width": 42,
+    "height": 42
+  },
+  "defaultVariant": "pink",
+  "characters": ["pink", "blue", "white"]
+}

@@ -1,0 +1,121 @@
+{
+  "name": "opit-companion",
+  "displayName": "OPIT Companion",
+  "description": "Your tiny coding companion.",
+  "version": "0.1.0",
+  "publisher": "opit",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished",
+    "onLanguage",
+    "onView:opit.sidebarView"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "opit-companion-view",
+          "title": "OPIT Companion",
+          "icon": "assets/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "opit-companion-view": [
+        {
+          "type": "webview",
+          "id": "opit.sidebarView",
+          "name": "OPIT Dashboard",
+          "visibility": "visible"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "opit.changeVariant",
+        "title": "OPIT: Change Character Skin"
+      },
+      {
+        "command": "opit.applySettings",
+        "title": "OPIT: Apply Cursor Settings"
+      },
+      {
+        "command": "opit.testError",
+        "title": "OPIT: Trigger Test Error Reaction 🤒"
+      },
+      {
+        "command": "opit.testSave",
+        "title": "OPIT: Trigger Test Save Reaction 🎉"
+      }
+    ],
+    "configuration": {
+      "title": "OPIT Companion Settings",
+      "properties": {
+        "opit.variant": {
+          "type": "string",
+          "default": "pink",
+          "enum": [
+            "pink",
+            "blue",
+            "white"
+          ],
+          "enumDescriptions": [
+            "Pink Hero Skin",
+            "Blue Hero Skin",
+            "White Hero Skin"
+          ],
+          "description": "Choose your OPIT Companion skin variant."
+        },
+        "opit.animationSpeed": {
+          "type": "number",
+          "default": 1.0,
+          "minimum": 0.5,
+          "maximum": 3.0,
+          "description": "Speed multiplier for OPIT animations."
+        },
+        "opit.displaySize": {
+          "type": "number",
+          "default": 22,
+          "minimum": 16,
+          "maximum": 64,
+          "description": "Display size in pixels for OPIT sprite (default 22px to fit standard editor line height)."
+        },
+        "opit.showCursor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show or hide the native IDE text cursor alongside OPIT Companion."
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "opit.cursorDown",
+        "key": "down",
+        "when": "editorTextFocus && !suggestWidgetVisible && !renameInputVisible && !inQuickOpen && !quickFixWidgetVisible && !parameterHintsVisible"
+      },
+      {
+        "command": "opit.cursorLeft",
+        "key": "left",
+        "when": "editorTextFocus && !suggestWidgetVisible && !renameInputVisible && !inQuickOpen && !quickFixWidgetVisible && !parameterHintsVisible"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "compile": "tsc -p ./ --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.0",
+    "@types/vscode": "^1.80.0",
+    "esbuild": "^0.19.0",
+    "typescript": "^5.1.6"
+  }
+}

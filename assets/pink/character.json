@@ -1,0 +1,26 @@
+{
+  "id": "pink",
+  "name": "Pink Monster",
+  "badge": "Monster",
+  "themeColor": "#ec4899",
+  "bgGlow": "rgba(236, 72, 153, 0.25)",
+  "frameWidth": 42,
+  "frameHeight": 42,
+  "author": "OPIT Team",
+  "actions": {
+    "idle": { "file": "idle.png", "frames": 4, "duration": 0.68 },
+    "typing": { "file": "typing.png", "frames": 6, "duration": 0.52 },
+    "typing_fast": { "file": "typing-fast.png", "frames": 6, "duration": 0.40 },
+    "backspace": { "file": "backspace.png", "frames": 6, "duration": 0.38 },
+    "backspace_bulk": { "file": "backspace-bulk.png", "frames": 6, "duration": 0.35 },
+    "enter": { "file": "enter.png", "frames": 6, "duration": 0.42 },
+    "shortcut_save": { "file": "shortcut-save.png", "frames": 6, "duration": 0.42 },
+    "arrow_up": { "file": "arrow-up.png", "frames": 8, "duration": 0.52 },
+    "arrow_down": { "file": "arrow-down.png", "frames": 4, "duration": 0.44 },
+    "arrow_horizontal": { "file": "arrow-horizontal.png", "frames": 6, "duration": 0.45 },
+    "stuck_down": { "file": "stuck-down.png", "frames": 6, "duration": 0.50 },
+    "stuck_left": { "file": "stuck-left.png", "frames": 4, "duration": 0.40 },
+    "mouse_teleport": { "file": "mouse-teleport.png", "frames": 8, "duration": 0.35 },
+    "error": { "file": "error.png", "frames": 4, "duration": 0.60 }
+  }
+}
