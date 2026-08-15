@@ -265,6 +265,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     .sprite-anim {
       width: 36px;
       height: 36px;
+      background-size: 144px 36px;
       background-repeat: no-repeat;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
