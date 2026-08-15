@@ -1,0 +1,15 @@
+.vscode/**
+.github/**
+docs/**
+src/**
+node_modules/**
+.gitignore
+.prettierrc
+.editorconfig
+tsconfig.json
+esbuild.js
+test.txt
+AGENTS.md
+CLAUDE.md
+*.vsix
+*.tsbuildinfo
