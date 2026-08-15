@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/icon.png" width="128" height="128" alt="OPIT Companion Logo" />
+  <img src="https://raw.githubusercontent.com/Taufik-H/opit-companion/main/assets/icon.png" width="128" height="128" alt="OPIT Companion Logo" />
 </p>
 
 <h1 align="center">OPIT Companion</h1>
@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <img src="demo/01-full-walkthrough-demo.gif" width="100%" alt="OPIT Companion Live Walkthrough" />
+  <img src="https://raw.githubusercontent.com/Taufik-H/opit-companion/main/demo/01-full-walkthrough-demo.gif" width="100%" alt="OPIT Companion Live Walkthrough" />
 </p>
 
 ---
@@ -48,7 +48,7 @@ As you write code, OPIT stays right by your cursor—sprinting when you type fas
 OPIT actively observes your editor actions and reacts in real time with continuous physics momentum:
 
 <p align="center">
-  <img src="demo/02-typing-reaction-preview.gif" width="100%" alt="Keystroke Reactions Demo" />
+  <img src="https://raw.githubusercontent.com/Taufik-H/opit-companion/main/demo/02-typing-reaction-preview.gif" width="100%" alt="Keystroke Reactions Demo" />
 </p>
 
 | Action | OPIT Reaction | What Happens |
@@ -68,7 +68,7 @@ OPIT actively observes your editor actions and reacts in real time with continuo
 Choose from distinct hero characters, each with their own theme color, personality, and animations:
 
 <p align="center">
-  <img src="demo/03-character-selection-and-actions.gif" width="100%" alt="Character Switching Demo" />
+  <img src="https://raw.githubusercontent.com/Taufik-H/opit-companion/main/demo/03-character-selection-and-actions.gif" width="100%" alt="Character Switching Demo" />
 </p>
 
 - 🌸 **Pink Monster**: Energetic and playful companion.
@@ -81,7 +81,7 @@ Choose from distinct hero characters, each with their own theme color, personali
 Access the companion control center from the **Activity Bar** (left sidebar):
 
 <p align="center">
-  <img src="demo/05-sidebar-settings-customization.gif" width="100%" alt="Sidebar Customization Demo" />
+  <img src="https://raw.githubusercontent.com/Taufik-H/opit-companion/main/demo/05-sidebar-settings-customization.gif" width="100%" alt="Sidebar Customization Demo" />
 </p>
 
 - **Live Character Selector**: Browse skins with continuous step-animated previews.
@@ -96,7 +96,7 @@ Access the companion control center from the **Activity Bar** (left sidebar):
 Trigger and preview animations on demand directly from the sidebar:
 
 <p align="center">
-  <img src="demo/04-reaction-test-actions.gif" width="100%" alt="Reaction Test Deck Demo" />
+  <img src="https://raw.githubusercontent.com/Taufik-H/opit-companion/main/demo/04-reaction-test-actions.gif" width="100%" alt="Reaction Test Deck Demo" />
 </p>
 
 - **Save**: Trigger celebratory jump animation.
@@ -112,7 +112,7 @@ Trigger and preview animations on demand directly from the sidebar:
 60 FPS ultra-smooth momentum physics that stays locked beside your text cursor without layout jitter:
 
 <p align="center">
-  <img src="demo/06-cursor-companion-closeup.gif" width="100%" alt="Cursor Tracking Close-up Demo" />
+  <img src="https://raw.githubusercontent.com/Taufik-H/opit-companion/main/demo/06-cursor-companion-closeup.gif" width="100%" alt="Cursor Tracking Close-up Demo" />
 </p>
 
 ---
