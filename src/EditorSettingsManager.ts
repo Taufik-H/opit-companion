@@ -91,7 +91,7 @@ export class EditorSettingsManager {
       const zedConfigPath = path.join(homeDir, ".config", "zed", "settings.json");
       if (fs.existsSync(zedConfigPath)) {
         const raw = fs.readFileSync(zedConfigPath, "utf8");
-        let config = {};
+        let config: Record<string, any> = {};
         try { config = JSON.parse(raw); } catch { return; }
         config.cursor_blink = false;
         config.cursor_shape = "bar";

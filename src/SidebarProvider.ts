@@ -41,6 +41,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           this.syncCurrentConfig();
           break;
         }
+        case "setEnabled": {
+          const enabled = Boolean(data.value);
+          this.inlineCompanion.setEnabled(enabled);
+          const config = vscode.workspace.getConfiguration("opit");
+          await config.update("enabled", enabled, vscode.ConfigurationTarget.Global);
+          break;
+        }
         case "setVariant": {
           this.inlineCompanion.setVariant(data.variant);
           const config = vscode.workspace.getConfiguration("opit");
@@ -98,6 +105,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   public syncCurrentConfig() {
     if (!this._view) return;
     const config = vscode.workspace.getConfiguration("opit");
+    const enabled = config.get<boolean>("enabled", true);
     const variant = config.get<string>("variant", "pink");
     const displaySize = config.get<number>("displaySize", 22);
     const animationSpeed = config.get<number>("animationSpeed", 1.0);
@@ -105,6 +113,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     this._view.webview.postMessage({
       command: "syncSettings",
+      enabled,
       variant,
       displaySize,
       animationSpeed,
@@ -115,10 +124,25 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private getHtmlForWebview(): string {
     const characters: CharacterPreviewData[] = this.characterRegistry.getPreviewList();
     const config = vscode.workspace.getConfiguration("opit");
+    const currentEnabled = config.get<boolean>("enabled", true);
     const currentVariant = config.get<string>("variant", "pink");
     const currentDisplaySize = config.get<number>("displaySize", 22);
     const currentAnimationSpeed = config.get<number>("animationSpeed", 1.0);
     const currentShowCursor = config.get<boolean>("showCursor", false);
+
+    // Build dynamic CSS animation rules for each character
+    const dynamicKeyframes = characters
+      .map((c) => {
+        const scale = 36 / (c.frameHeight || 42);
+        const scaledFrameWidth = Math.round((c.frameWidth || 42) * scale);
+        const scaledFrameHeight = Math.round((c.frameHeight || 42) * scale);
+        const totalScaledWidth = scaledFrameWidth * (c.idleFrames || 4);
+        return `@keyframes play-idle-${c.id} {
+          from { background-position: 0px 0px; }
+          to { background-position: -${totalScaledWidth}px 0px; }
+        }`;
+      })
+      .join("\n");
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -162,7 +186,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--border);
     }
@@ -175,17 +199,33 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       color: var(--text);
     }
 
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .header-status {
       display: inline-flex;
       align-items: center;
       gap: 4px;
       font-size: 9.5px;
       font-family: var(--font-mono);
-      color: #34d399;
-      background: rgba(52, 211, 153, 0.08);
       padding: 1px 5px;
       border-radius: 3px;
+      transition: all 0.2s ease;
+    }
+
+    .header-status.active {
+      color: #34d399;
+      background: rgba(52, 211, 153, 0.08);
       border: 1px solid rgba(52, 211, 153, 0.15);
+    }
+
+    .header-status.inactive {
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .header-status-dot {
@@ -193,10 +233,51 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       height: 4px;
       border-radius: 50%;
       background: #34d399;
+      transition: background 0.2s ease;
+    }
+
+    .header-status.inactive .header-status-dot {
+      background: #71717a;
+    }
+
+    /* ─── Filter Tabs ─── */
+    .filter-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .filter-tab {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 2px 7px;
+      font-size: 9.5px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.12s ease;
+    }
+
+    .filter-tab:hover {
+      background: var(--surface-hover);
+      color: var(--text);
+    }
+
+    .filter-tab.active {
+      background: var(--border-focus);
+      color: #ffffff;
+      border-color: var(--border-focus);
     }
 
     /* ─── Section Label ─── */
     .section-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 9.5px;
       font-weight: 600;
       letter-spacing: 0.7px;
@@ -205,19 +286,36 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       margin-bottom: 6px;
     }
 
+    .section-count {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+
     /* ─── Character Grid ─── */
     .char-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 6px;
       margin-bottom: 14px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .char-grid::-webkit-scrollbar {
+      width: 4px;
+    }
+    .char-grid::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 2px;
     }
 
     .char-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 4px;
-      padding: 6px 4px;
+      padding: 6px 3px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -252,8 +350,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     }
 
     .sprite-viewport {
-      width: 42px;
-      height: 42px;
+      width: 36px;
+      height: 36px;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -262,22 +360,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     }
 
     .sprite-anim {
-      width: 42px;
-      height: 42px;
-      background-size: 168px 42px;
       background-repeat: no-repeat;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
-      animation: play-idle 0.68s steps(4, end) infinite;
-    }
-
-    @keyframes play-idle {
-      from { background-position: 0px 0px; }
-      to { background-position: -168px 0px; }
     }
 
     .char-name {
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 500;
       color: var(--text);
       white-space: nowrap;
@@ -285,6 +374,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       text-overflow: ellipsis;
       max-width: 100%;
       text-align: center;
+    }
+
+    .char-badge {
+      font-size: 8px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-top: 1px;
     }
 
     /* ─── Configuration Deck ─── */
@@ -444,40 +541,83 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     .apply-btn:active {
       transform: translateY(1px);
     }
+
+    ${dynamicKeyframes}
   </style>
 </head>
 <body>
   <div class="header">
-    <span class="header-title">OPIT Companion</span>
-    <span class="header-status">
-      <span class="header-status-dot"></span>
-      Active
-    </span>
+    <div class="header-left">
+      <span class="header-title">OPIT Companion</span>
+      <span class="header-status ${currentEnabled ? "active" : "inactive"}" id="headerStatusPill">
+        <span class="header-status-dot" id="headerStatusDot"></span>
+        <span id="headerStatusText">${currentEnabled ? "Active" : "Inactive"}</span>
+      </span>
+    </div>
+    <label class="switch" title="Toggle OPIT Companion Active / Inactive">
+      <input 
+        type="checkbox" 
+        id="enabledToggle" 
+        ${currentEnabled ? "checked" : ""} 
+        onchange="toggleEnabled(this.checked)"
+      />
+      <span class="switch-slider"></span>
+    </label>
   </div>
 
   <div class="section-label">
-    <span>Companion</span>
+    <span>Choose Companion</span>
+    <span class="section-count">${characters.length} Available</span>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="filter-tab active" onclick="filterClass('all')">All</button>
+    <button class="filter-tab" onclick="filterClass('Retro')">Retro</button>
+    <button class="filter-tab" onclick="filterClass('Werewolf')">Werewolf</button>
+    <button class="filter-tab" onclick="filterClass('Ninja')">Ninja</button>
+    <button class="filter-tab" onclick="filterClass('Knight')">Knight</button>
+    <button class="filter-tab" onclick="filterClass('Mage')">Mage</button>
+    <button class="filter-tab" onclick="filterClass('Orc')">Orc</button>
+    <button class="filter-tab" onclick="filterClass('Slime')">Slime</button>
+    <button class="filter-tab" onclick="filterClass('Warrior')">Warrior</button>
   </div>
 
   <div class="char-grid" id="charGrid">
     ${characters
-      .map(
-        (c) => `
+      .map((c) => {
+        const scale = 36 / (c.frameHeight || 42);
+        const scaledFrameWidth = Math.round((c.frameWidth || 42) * scale);
+        const scaledFrameHeight = Math.round((c.frameHeight || 42) * scale);
+        const totalScaledWidth = scaledFrameWidth * (c.idleFrames || 4);
+        const animDuration = ((c.idleFrames || 4) * 0.11).toFixed(2);
+
+        return `
       <div 
         class="char-card ${c.id === currentVariant ? "active" : ""}" 
         data-variant="${c.id}"
+        data-badge="${c.badge}"
         style="--card-accent: ${c.color};"
         onclick="selectVariant('${c.id}')"
-        title="${c.name}"
+        title="${c.name} (${c.badge})"
       >
         <span class="char-indicator"></span>
         <div class="sprite-viewport">
-          <div class="sprite-anim" style="background-image: url('${c.base64Idle}');"></div>
+          <div 
+            class="sprite-anim" 
+            style="
+              width: ${scaledFrameWidth}px; 
+              height: ${scaledFrameHeight}px; 
+              background-image: url('${c.base64Idle}'); 
+              background-size: ${totalScaledWidth}px ${scaledFrameHeight}px; 
+              animation: play-idle-${c.id} ${animDuration}s steps(${c.idleFrames || 4}, end) infinite;
+            "
+          ></div>
         </div>
         <div class="char-name">${c.name}</div>
+        <div class="char-badge">${c.badge}</div>
       </div>
-    `
-      )
+    `;
+      })
       .join("")}
   </div>
 
@@ -510,7 +650,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         type="range" 
         id="sizeSlider" 
         min="16" 
-        max="40" 
+        max="48" 
         step="1" 
         value="${currentDisplaySize}"
         oninput="updateDisplaySize(this.value)"
@@ -555,6 +695,50 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const vscode = acquireVsCodeApi();
     vscode.postMessage({ command: 'ready' });
 
+    function filterClass(cls) {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.querySelectorAll('.char-card').forEach(card => {
+        const badge = (card.dataset.badge || '').toLowerCase();
+        const target = cls.toLowerCase();
+        const isRetro = ['monster', 'hero', 'chocobo', 'retro'].includes(badge);
+
+        if (target === 'all') {
+          card.style.display = 'flex';
+        } else if (target === 'retro') {
+          card.style.display = isRetro ? 'flex' : 'none';
+        } else if (badge === target) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function toggleEnabled(checked) {
+      updateStatusUI(checked);
+      vscode.postMessage({ command: 'setEnabled', value: checked });
+    }
+
+    function updateStatusUI(enabled) {
+      const pill = document.getElementById('headerStatusPill');
+      const text = document.getElementById('headerStatusText');
+      const toggle = document.getElementById('enabledToggle');
+      if (pill && text) {
+        if (enabled) {
+          pill.className = 'header-status active';
+          text.innerText = 'Active';
+        } else {
+          pill.className = 'header-status inactive';
+          text.innerText = 'Inactive';
+        }
+      }
+      if (toggle) {
+        toggle.checked = enabled;
+      }
+    }
+
     function selectVariant(variant) {
       document.querySelectorAll('.char-card').forEach(card => {
         if (card.dataset.variant === variant) {
@@ -592,6 +776,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     window.addEventListener('message', event => {
       const message = event.data;
       if (message.command === 'syncSettings') {
+        if (message.enabled !== undefined) {
+          updateStatusUI(Boolean(message.enabled));
+        }
         if (message.variant) {
           document.querySelectorAll('.char-card').forEach(card => {
             if (card.dataset.variant === message.variant) {

@@ -198,6 +198,36 @@ This project follows **Semantic Versioning (SemVer 2.0)**. Updates and releases 
 
 ---
 
+---
+
+## 🎨 Character Roster (15 Playable Companions)
+
+Choose your ideal coding buddy across 5 unique classes:
+
+| Class | Characters | Highlights |
+| :--- | :--- | :--- |
+| **Retro Heroes** | 🌸 **Pink Monster**, 🔷 **Blue Hero**, 🤍 **White Chocobo** | Classic 42px retro sprite with smooth sprint & slash |
+| **Werewolves** | 🐺 **Shadow Werewolf**, 🩸 **Blood Werewolf**, ❄️ **Frost Werewolf** | High-intensity `Run+Attack` claw slash animations |
+| **Ninjas** | 🥷 **Ninja Monk**, 🗡️ **Shadow Shinobi**, 🌸 **Kunoichi** | Rapid `Attack_1` sword strikes & smoke teleport jutsu |
+| **Knights** | 🛡️ **Silver Knight**, 👑 **Golden Knight**, ⚔️ **Dark Paladin** | Heavy armor `Run+Attack` blade swings & shield defend |
+| **Mages** | 🔥 **Fire Wizard**, ⚡ **Lightning Mage**, 🌿 **Wanderer Mage** | Epic elemental spellcasting & charge reactions |
+
+---
+
+## 🙏 Asset Credits & Attribution
+
+We extend our deep gratitude to the talented pixel artists and game asset creators who make developer tools fun and expressive:
+
+- **Free Game Assets by [CraftPix.net](https://craftpix.net/freebies/)**:
+  - Werewolf Character Sprites ([CraftPix Freebies](https://craftpix.net/freebies/))
+  - 2D Ninja Character Sprites ([CraftPix Freebies](https://craftpix.net/freebies/))
+  - Tiny Knight 2D Character Sprites ([CraftPix Freebies](https://craftpix.net/freebies/))
+  - 2D Mage & Wizard Character Sprites ([CraftPix Freebies](https://craftpix.net/freebies/))
+  - Licensed under the [CraftPix Freebie File License](https://craftpix.net/file-licenses/).
+- **Retro Character Sprites**:
+  - Original retro chibi monster & paladin companion pixel-art assets.
+
+---
 ## 📄 License
 
 MIT License © 2026 [Taufik-H](https://github.com/Taufik-H). Built with ❤️ for coders who love a little companionship in their editor! 👾✨

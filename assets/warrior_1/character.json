@@ -1,0 +1,116 @@
+{
+  "id": "warrior_1",
+  "name": "Iron Warrior",
+  "badge": "Warrior",
+  "themeColor": "#ea580c",
+  "bgGlow": "rgba(234, 88, 12, 0.25)",
+  "frameWidth": 96,
+  "frameHeight": 96,
+  "author": "CraftPix",
+  "actions": {
+    "idle": {
+      "file": "idle.png",
+      "frames": 6,
+      "duration": 0.48
+    },
+    "typing": {
+      "file": "typing.png",
+      "frames": 8,
+      "duration": 0.64
+    },
+    "typing-fast": {
+      "file": "typing-fast.png",
+      "frames": 6,
+      "duration": 0.48
+    },
+    "arrow-horizontal": {
+      "file": "arrow-horizontal.png",
+      "frames": 6,
+      "duration": 0.48
+    },
+    "arrow-up": {
+      "file": "arrow-up.png",
+      "frames": 5,
+      "duration": 0.42,
+      "startFrame": 2,
+      "playFrames": 3
+    },
+    "arrow-down": {
+      "file": "arrow-down.png",
+      "frames": 2,
+      "duration": 0.2
+    },
+    "backspace": {
+      "file": "backspace.png",
+      "frames": 4,
+      "duration": 0.32
+    },
+    "backspace-bulk": {
+      "file": "backspace-bulk.png",
+      "frames": 4,
+      "duration": 0.32
+    },
+    "enter": {
+      "file": "enter.png",
+      "frames": 4,
+      "duration": 0.32
+    },
+    "shortcut-save": {
+      "file": "shortcut-save.png",
+      "frames": 4,
+      "duration": 0.32
+    },
+    "mouse-teleport": {
+      "file": "mouse-teleport.png",
+      "frames": 5,
+      "duration": 0.42,
+      "startFrame": 2,
+      "playFrames": 3
+    },
+    "error": {
+      "file": "error.png",
+      "frames": 2,
+      "duration": 0.2
+    },
+    "stuck-down": {
+      "file": "stuck-down.png",
+      "frames": 2,
+      "duration": 0.2
+    },
+    "stuck-left": {
+      "file": "stuck-left.png",
+      "frames": 4,
+      "duration": 0.32
+    },
+    "idle-combo-1": {
+      "file": "idle-combo-1.png",
+      "frames": 4,
+      "duration": 0.32
+    },
+    "idle-combo-2": {
+      "file": "idle-combo-2.png",
+      "frames": 4,
+      "duration": 0.32
+    },
+    "idle-combo-3": {
+      "file": "idle-combo-3.png",
+      "frames": 4,
+      "duration": 0.32
+    },
+    "idle-combo-4": {
+      "file": "idle-combo-4.png",
+      "frames": 4,
+      "duration": 0.32
+    },
+    "idle-combo-5": {
+      "file": "idle-combo-5.png",
+      "frames": 5,
+      "duration": 0.4
+    },
+    "idle-combo-6": {
+      "file": "idle-combo-6.png",
+      "frames": 6,
+      "duration": 0.48
+    }
+  }
+}

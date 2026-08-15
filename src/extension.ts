@@ -25,6 +25,18 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  // Register Toggle Active / Inactive Command
+  const toggleCommand = vscode.commands.registerCommand("opit.toggleEnabled", async () => {
+    const isNowEnabled = inlineCompanion.toggleEnabled();
+    const config = vscode.workspace.getConfiguration("opit");
+    await config.update("enabled", isNowEnabled, vscode.ConfigurationTarget.Global);
+    sidebarProvider.syncCurrentConfig();
+    vscode.window.showInformationMessage(
+      `OPIT Companion is now ${isNowEnabled ? "Active (Enabled) 👾" : "Inactive (Disabled) 💤"}`
+    );
+  });
+  context.subscriptions.push(toggleCommand);
+
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       SidebarProvider.viewType,
@@ -48,6 +60,32 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     })
   );
+
+  // Check for extension update and notify user with friendly toast
+  const currentVersion = context.extension?.packageJSON?.version;
+  const lastVersion = context.globalState.get<string>("opit.lastVersion");
+
+  if (currentVersion && lastVersion && lastVersion !== currentVersion) {
+    vscode.window
+      .showInformationMessage(
+        `🎉 OPIT Companion updated to v${currentVersion}! Dynamic baseline tracking is now active.`,
+        "Open Dashboard",
+        "View Releases"
+      )
+      .then((selection) => {
+        if (selection === "Open Dashboard") {
+          vscode.commands.executeCommand("opit.sidebarView.focus");
+        } else if (selection === "View Releases") {
+          vscode.env.openExternal(
+            vscode.Uri.parse("https://github.com/Taufik-H/opit-companion/releases")
+          );
+        }
+      });
+  }
+
+  if (currentVersion) {
+    context.globalState.update("opit.lastVersion", currentVersion);
+  }
 
   // Register Commands
   const changeVariantHandler = async () => {

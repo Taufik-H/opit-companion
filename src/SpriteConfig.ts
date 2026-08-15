@@ -11,6 +11,8 @@ export interface SpriteInfo {
   duration: number; // Duration in seconds for 1 full loop
   frameWidth: number;
   frameHeight: number;
+  startFrame?: number;
+  playFrames?: number;
 }
 
 // ─── Animation Timing Constants ───────────────────────────────────────

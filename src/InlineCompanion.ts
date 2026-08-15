@@ -1,28 +1,15 @@
+import { EditorSettingsManager } from "./EditorSettingsManager";
 import * as vscode from "vscode";
 import { OpitState } from "./EditorObserver";
-import { SpriteInfo, FRAME_WIDTH, FRAME_HEIGHT } from "./SpriteConfig";
+import { SpriteInfo } from "./SpriteConfig";
 import { SpriteRenderer } from "./SpriteRenderer";
 import { DirectionManager } from "./DirectionManager";
 import { CharacterRegistry } from "./CharacterRegistry";
 
-// ─── Idle Combo Sequence ──────────────────────────────────────────────
-// After 3 seconds of idle, the character performs this "bored" combo,
-// then returns to idle and waits 3 seconds again (infinite loop).
-interface ComboStep {
-  filename: string;
-  frames: number;
-  duration: number; // seconds for one full animation loop
-}
-
+// ─── Idle Combo Timing ────────────────────────────────────────────────
+// After 3 seconds of idle, the character performs its available idle combos,
+// then returns to idle and waits 3 seconds again (if idle combos exist).
 const IDLE_COMBO_DELAY_MS = 3000;
-const IDLE_COMBO_SEQUENCE: ComboStep[] = [
-  { filename: "idle-combo-1.png", frames: 6, duration: 0.40 },
-  { filename: "idle-combo-2.png", frames: 6, duration: 0.40 },
-  { filename: "idle-combo-3.png", frames: 4, duration: 0.44 },
-  { filename: "idle-combo-4.png", frames: 6, duration: 0.50 },
-  { filename: "idle-combo-5.png", frames: 8, duration: 0.52 },
-  { filename: "idle-combo-6.png", frames: 6, duration: 0.42 },
-];
 
 export class InlineCompanion {
   private decorationType: vscode.TextEditorDecorationType;
@@ -31,6 +18,7 @@ export class InlineCompanion {
   // State
   private currentState: OpitState = "idle";
   private currentVariant: string = "pink";
+  private isEnabled: boolean = true;
   private animationSpeed: number = 1.0;
 
   // Teleport dual-animation tracking
@@ -92,11 +80,41 @@ export class InlineCompanion {
 
   // ─── Configuration ──────────────────────────────────────────────────
 
+  public getEnabled(): boolean {
+    return this.isEnabled;
+  }
+
+  public setEnabled(enabled: boolean) {
+    this.isEnabled = enabled;
+    if (!enabled) {
+      this.clearActiveDecoration();
+      this.clearDepartDecoration();
+      this.cancelIdleCombo();
+      EditorSettingsManager.setCursorVisibility(true);
+    } else {
+      const config = vscode.workspace.getConfiguration("opit");
+      const showCursor = config.get<boolean>("showCursor", false);
+      EditorSettingsManager.setCursorVisibility(showCursor);
+      this.startIdleDelay();
+      this.renderCurrentFrame(true);
+    }
+  }
+
+  public toggleEnabled(): boolean {
+    const next = !this.isEnabled;
+    this.setEnabled(next);
+    return next;
+  }
+
   public setVariant(variant: string) {
     this.currentVariant = variant;
+    this.cancelIdleCombo();
     this.renderer.clearCache();
     this.lastRenderKey = "";
     this.renderCurrentFrame(true);
+    if (this.currentState === "idle") {
+      this.startIdleDelay();
+    }
   }
 
   public setDisplaySize(displaySize: number) {
@@ -120,27 +138,40 @@ export class InlineCompanion {
     this.animationSpeed = config.get<number>("animationSpeed", 1.0);
     const displaySize = config.get<number>("displaySize", 22);
 
+    this.cancelIdleCombo();
     this.renderer.updateSettings(displaySize, this.animationSpeed);
     this.renderer.clearCache();
     this.lastRenderKey = "";
     this.renderCurrentFrame(true);
+    if (this.currentState === "idle") {
+      this.startIdleDelay();
+    }
   }
 
   // ─── State Management ──────────────────────────────────────────────
 
   public setState(state: OpitState, isEventTriggered: boolean = false, metadata?: any) {
-    // Teleport with dual-animation (depart + arrive)
-    if (state === "teleport" && metadata?.previousPos) {
+    // Teleport with instant reactivity (cancel existing teleport timer and start fresh immediately)
+    if (state === "teleport") {
       this.cancelIdleCombo();
+      if (this.teleportTimer) {
+        clearTimeout(this.teleportTimer);
+        this.teleportTimer = null;
+      }
+      this.clearDepartDecoration();
+
       this.isTeleporting = true;
-      this.teleportPreviousPos = metadata.previousPos;
+      const editor = vscode.window.activeTextEditor ?? this.lastActiveEditor;
+      this.teleportPreviousPos = metadata?.previousPos ?? (editor ? editor.selection.active : null);
       this.currentState = "teleport";
       this.lastRenderKey = ""; // Force fresh render for teleport
       this.renderCurrentFrame(true);
 
-      if (this.teleportTimer) {
-        clearTimeout(this.teleportTimer);
-      }
+      // Clean up previous position smoke poof after 240ms
+      setTimeout(() => {
+        this.clearDepartDecoration();
+      }, 240);
+
       this.teleportTimer = setTimeout(() => {
         this.isTeleporting = false;
         this.teleportPreviousPos = null;
@@ -148,18 +179,27 @@ export class InlineCompanion {
         this.currentState = "idle";
         this.renderCurrentFrame(true);
         this.startIdleDelay();
-      }, 450);
+      }, 480);
       return;
     }
 
-    // PROTECT teleport animation from being killed by follow-up events.
+    // If an explicit user interaction occurs while teleporting, instantly cancel teleport and yield to user action
     if (this.isTeleporting) {
-      this.onCursorPositionChanged();
-      return;
+      if (isEventTriggered) {
+        this.isTeleporting = false;
+        if (this.teleportTimer) {
+          clearTimeout(this.teleportTimer);
+          this.teleportTimer = null;
+        }
+        this.clearDepartDecoration();
+      } else {
+        this.onCursorPositionChanged();
+        return;
+      }
     }
 
-    // Any user action interrupts the idle combo
-    if (this.isPlayingIdleCombo && state !== "idle") {
+    // Any non-idle state immediately cancels pending delay timers and active idle combos
+    if (state !== "idle") {
       this.cancelIdleCombo();
     }
 
@@ -172,6 +212,27 @@ export class InlineCompanion {
     // Update facing direction
     this.directionManager.update(state);
 
+    // If already in a stuck state and a repeat trigger arrives (user holding down/left arrow)
+    if ((state === "stuck_left" || state === "stuck_down") && this.currentState === state) {
+      if (this.transientTimer) {
+        clearTimeout(this.transientTimer);
+      }
+      this.transientTimer = setTimeout(() => {
+        if (this.currentState === state) {
+          this.currentState = "idle";
+          this.lastRenderKey = "";
+          this.renderCurrentFrame(true);
+          this.startIdleDelay();
+        }
+      }, 250);
+      return;
+    }
+
+    if (this.transientTimer) {
+      clearTimeout(this.transientTimer);
+      this.transientTimer = null;
+    }
+
     // Skip redundant state updates
     if (this.currentState === state && !isEventTriggered) {
       return;
@@ -182,7 +243,7 @@ export class InlineCompanion {
     }
 
     this.currentState = state;
-    this.renderCurrentFrame(false);
+    this.renderCurrentFrame(isEventTriggered);
 
     // Transient one-shot actions (e.g. bumping left wall or stuck down)
     if (state === "stuck_left" || state === "stuck_down") {
@@ -195,12 +256,10 @@ export class InlineCompanion {
           this.renderCurrentFrame(true);
           this.startIdleDelay();
         }
-      }, durationMs);
+      }, Math.max(300, durationMs));
     } else if (state === "idle") {
       // Start idle combo delay when entering idle
       this.startIdleDelay();
-    } else {
-      this.cancelIdleCombo();
     }
   }
 
@@ -222,18 +281,31 @@ export class InlineCompanion {
 
   /**
    * Starts the 3-second delay before the idle combo begins.
+   * If the character has no idle combo files on disk, no timer is set.
    */
   private startIdleDelay() {
     this.cancelIdleCombo();
+    const idleCombos = this.characterRegistry.getIdleCombos(this.currentVariant);
+    if (idleCombos.length === 0) {
+      return; // No idle combos exist for this character; stays in normal idle permanently
+    }
+
     this.idleDelayTimer = setTimeout(() => {
       this.startIdleCombo();
     }, IDLE_COMBO_DELAY_MS);
   }
 
   /**
-   * Begins the idle combo sequence: Combo 1 -> 2 -> 3 -> 4 -> 5 -> 6
+   * Begins the idle combo sequence for the current character:
+   * Plays each available combo step (1..N) sequentially.
    */
   private startIdleCombo() {
+    const idleCombos = this.characterRegistry.getIdleCombos(this.currentVariant);
+    if (idleCombos.length === 0) {
+      this.cancelIdleCombo();
+      return;
+    }
+
     this.isPlayingIdleCombo = true;
     this.idleComboStepIndex = 0;
     this.renderCurrentFrame(true);
@@ -246,15 +318,25 @@ export class InlineCompanion {
   private scheduleNextComboStep() {
     if (!this.isPlayingIdleCombo || this.idleComboStepIndex < 0) return;
 
-    const step = IDLE_COMBO_SEQUENCE[this.idleComboStepIndex];
-    // Wait for the current animation to complete, then advance
-    const durationMs = step.duration * 1000;
+    const idleCombos = this.characterRegistry.getIdleCombos(this.currentVariant);
+    if (this.idleComboStepIndex >= idleCombos.length) {
+      this.cancelIdleCombo();
+      this.currentState = "idle";
+      this.lastRenderKey = "";
+      this.renderCurrentFrame(true);
+      this.startIdleDelay();
+      return;
+    }
+
+    const step = idleCombos[this.idleComboStepIndex];
+    const durationMs = (step.duration * 1000) / this.animationSpeed;
 
     this.idleComboTimer = setTimeout(() => {
       this.idleComboStepIndex++;
 
-      if (this.idleComboStepIndex >= IDLE_COMBO_SEQUENCE.length) {
-        // Combo finished — return to idle and restart the 3-second delay
+      const currentCombos = this.characterRegistry.getIdleCombos(this.currentVariant);
+      if (this.idleComboStepIndex >= currentCombos.length) {
+        // Combo sequence finished — return to idle and restart the 3-second delay
         this.isPlayingIdleCombo = false;
         this.idleComboStepIndex = -1;
         this.currentState = "idle";
@@ -292,35 +374,45 @@ export class InlineCompanion {
    * Returns the current sprite info, accounting for idle combo override.
    */
   private getCurrentSpriteState(): { info: SpriteInfo; oneShot: boolean; reverse: boolean } {
-    // Idle combo override — use the combo step's sprite
+    // Idle combo override — use the current character's resolved combo step
     if (this.isPlayingIdleCombo && this.idleComboStepIndex >= 0) {
-      const step = IDLE_COMBO_SEQUENCE[this.idleComboStepIndex];
-      return {
-        info: {
-          filename: step.filename,
-          frames: step.frames,
-          duration: step.duration,
-          frameWidth: FRAME_WIDTH,
-          frameHeight: FRAME_HEIGHT,
-        },
-        oneShot: true,  // Each combo step plays exactly once
-        reverse: false,
-      };
+      const idleCombos = this.characterRegistry.getIdleCombos(this.currentVariant);
+      if (this.idleComboStepIndex < idleCombos.length) {
+        const step = idleCombos[this.idleComboStepIndex];
+        return {
+          info: step,
+          oneShot: true, // Each combo step plays exactly once
+          reverse: false,
+        };
+      }
     }
 
     // Normal state via CharacterRegistry with tiered fallback
     const isTeleport = this.currentState === "teleport";
-    const isOneShot = isTeleport || this.currentState === "stuck_left" || this.currentState === "stuck_down";
+    const isOneShot =
+      isTeleport ||
+      this.currentState === "stuck_left" ||
+      this.currentState === "stuck_down" ||
+      this.currentState === "arrow_up" ||
+      this.currentState === "arrow_down" ||
+      this.currentState === "jump" ||
+      this.currentState === "save" ||
+      this.currentState === "enter";
     const resolved = this.characterRegistry.resolveAction(this.currentVariant, this.currentState);
 
     return {
       info: resolved,
       oneShot: isOneShot,
-      reverse: isTeleport,
+      reverse: false,
     };
   }
 
   public renderCurrentFrame(force: boolean = false) {
+    if (!this.isEnabled) {
+      this.clearActiveDecoration();
+      this.clearDepartDecoration();
+      return;
+    }
     if (vscode.window.activeTextEditor) {
       this.lastActiveEditor = vscode.window.activeTextEditor;
     }
@@ -339,6 +431,7 @@ export class InlineCompanion {
     }
 
     const { info, oneShot, reverse } = this.getCurrentSpriteState();
+    const currentDir = this.directionManager.get();
 
     const svgUri = this.renderer.getSpriteSvgUri(
       this.currentVariant,
@@ -347,9 +440,11 @@ export class InlineCompanion {
       info.duration,
       info.frameWidth,
       info.frameHeight,
-      this.directionManager.get(),
+      currentDir,
       oneShot,
-      reverse
+      reverse,
+      info.startFrame ?? 0,
+      info.playFrames
     );
     if (!svgUri) return;
 
@@ -358,7 +453,21 @@ export class InlineCompanion {
       info.frameWidth,
       info.frameHeight
     );
-    const marginStr = this.renderer.getMarginString(info.frameWidth, info.frameHeight);
+
+    // Dynamically detect editor line height & font size for pixel-perfect baseline tracking
+    const editorConfig = vscode.workspace.getConfiguration("editor", editor.document.uri);
+    const fontSize = editorConfig.get<number>("fontSize", 14);
+    const rawLineHeight = editorConfig.get<number>("lineHeight", 0);
+    const effectiveLineHeight = rawLineHeight > 0 ? rawLineHeight : Math.round(fontSize * 1.4);
+
+    const asymmetryX = this.characterRegistry.getAsymmetryX(this.currentVariant);
+    const marginStr = this.renderer.getMarginString(
+      info.frameWidth,
+      info.frameHeight,
+      effectiveLineHeight,
+      currentDir,
+      asymmetryX
+    );
 
     // Deduplication — skip identical renders (include combo step for uniqueness)
     const comboKey = this.isPlayingIdleCombo ? `combo:${this.idleComboStepIndex}` : "";
@@ -368,25 +477,23 @@ export class InlineCompanion {
     }
     this.lastRenderKey = renderKey;
 
-    // Teleport depart animation at previous position
+    // Universal Smoke Poof: Depart animation at previous position
     if (this.isTeleporting && this.teleportPreviousPos) {
-      const departInfo = this.characterRegistry.resolveAction(this.currentVariant, "teleport_depart");
-      const departSvgUri = this.renderer.getSpriteSvgUri(
+      const departSvgUri = this.renderer.getTeleportDepartCompositeSvgUri(
         this.currentVariant,
-        departInfo.filename,
-        departInfo.frames,
-        departInfo.duration,
-        departInfo.frameWidth,
-        departInfo.frameHeight,
-        this.directionManager.get(),
-        true // one-shot
+        info.filename,
+        info.frames,
+        info.frameWidth,
+        info.frameHeight,
+        currentDir,
+        0.26
       );
       if (departSvgUri) {
         const prevRange = new vscode.Range(this.teleportPreviousPos, this.teleportPreviousPos);
         editor.setDecorations(this.teleportDepartDecorationType, [
           {
             range: prevRange,
-            hoverMessage: "OPIT Companion Teleport Depart 🌀",
+            hoverMessage: "OPIT Companion Smoke Vanish 💨",
             renderOptions: {
               after: {
                 contentIconPath: departSvgUri,
@@ -400,6 +507,25 @@ export class InlineCompanion {
       }
     }
 
+    // Determine active SVG URI (use composite arrival smoke if teleporting)
+    let activeSvgUri = svgUri;
+    if (this.isTeleporting) {
+      const compositeArriveSvg = this.renderer.getTeleportArrivalCompositeSvgUri(
+        this.currentVariant,
+        info.filename,
+        info.frames,
+        info.frameWidth,
+        info.frameHeight,
+        this.directionManager.get(),
+        info.duration,
+        info.startFrame ?? 0,
+        info.playFrames
+      );
+      if (compositeArriveSvg) {
+        activeSvgUri = compositeArriveSvg;
+      }
+    }
+
     // Main character decoration at cursor position
     const range = new vscode.Range(activePosition, activePosition);
     editor.setDecorations(this.decorationType, [
@@ -408,7 +534,7 @@ export class InlineCompanion {
         hoverMessage: `OPIT Companion 👾 (${this.currentState})`,
         renderOptions: {
           after: {
-            contentIconPath: svgUri,
+            contentIconPath: activeSvgUri,
             width: `${renderWidth}px`,
             height: `${renderHeight}px`,
             margin: marginStr,

@@ -61,11 +61,15 @@
       },
       {
         "command": "opit.testError",
-        "title": "OPIT: Trigger Test Error Reaction 🤒"
+        "title": "OPIT: Trigger Test Error Reaction \ud83e\udd12"
       },
       {
         "command": "opit.testSave",
-        "title": "OPIT: Trigger Test Save Reaction 🎉"
+        "title": "OPIT: Trigger Test Save Reaction \ud83c\udf89"
+      },
+      {
+        "command": "opit.toggleEnabled",
+        "title": "OPIT Companion: Toggle Active / Inactive"
       }
     ],
     "configuration": {
@@ -77,12 +81,54 @@
           "enum": [
             "pink",
             "blue",
-            "white"
+            "white",
+            "werewolf_black",
+            "werewolf_red",
+            "werewolf_white",
+            "ninja_monk",
+            "ninja_peasant",
+            "ninja_kunoichi",
+            "knight_1",
+            "knight_2",
+            "knight_3",
+            "mage_fire",
+            "mage_lightning",
+            "mage_wanderer",
+            "orc_berserk",
+            "orc_shaman",
+            "orc_warrior",
+            "slime_blue",
+            "slime_green",
+            "slime_red",
+            "warrior_1",
+            "warrior_2",
+            "warrior_3"
           ],
           "enumDescriptions": [
-            "Pink Hero Skin",
-            "Blue Hero Skin",
-            "White Hero Skin"
+            "Pink Monster (Retro Hero)",
+            "Blue Hero (Retro Hero)",
+            "White Chocobo (Retro Hero)",
+            "Shadow Werewolf (Black Werewolf)",
+            "Blood Werewolf (Red Werewolf)",
+            "Frost Werewolf (White Werewolf)",
+            "Ninja Monk (Cyan Ninja)",
+            "Shadow Shinobi (Purple Ninja)",
+            "Kunoichi (Pink Ninja Warrior)",
+            "Silver Knight (Knight 1)",
+            "Golden Knight (Knight 2)",
+            "Dark Paladin (Knight 3)",
+            "Fire Wizard (Fire Mage)",
+            "Lightning Mage (Lightning Wizard)",
+            "Wanderer Mage (Emerald Wizard)",
+            "Orc Berserker (Furious Orc)",
+            "Orc Shaman (Mystic Orc)",
+            "Orc Warrior (Armored Orc)",
+            "Blue Slime (Aquatic Slime)",
+            "Green Slime (Emerald Slime)",
+            "Red Slime (Magma Slime)",
+            "Iron Warrior (Warrior 1)",
+            "Crimson Warrior (Warrior 2)",
+            "Golden Warrior (Warrior 3)"
           ],
           "description": "Choose your OPIT Companion skin variant."
         },
@@ -104,6 +150,11 @@
           "type": "boolean",
           "default": false,
           "description": "Show or hide the native IDE text cursor alongside OPIT Companion."
+        },
+        "opit.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable OPIT Companion."
         }
       }
     },

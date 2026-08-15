@@ -110,14 +110,17 @@ export class EditorObserver {
           if (!isRecentDelete) {
             if (lineDelta < 0) {
               this.emitState("arrow_up", true);
+              this.resetIdleTimer(540);
             } else if (lineDelta > 0) {
               this.emitState("arrow_down", true);
+              this.resetIdleTimer(280);
             } else if (charDelta < 0) {
               this.emitState("arrow_left", true);
+              this.resetIdleTimer(160);
             } else if (charDelta > 0) {
               this.emitState("arrow_right", true);
+              this.resetIdleTimer(160);
             }
-            this.resetIdleTimer(150);
           } else {
             this.inlineCompanion?.onCursorPositionChanged();
           }
