@@ -53,6 +53,21 @@ Access the companion control center from the **Activity Bar** (left sidebar):
 
 ---
 
+---
+
+## 🎬 Video Showcase & Demos
+
+Watch OPIT Companion in action across different coding workflows:
+
+| Demo Video | Action / Feature | Highlights |
+| :--- | :--- | :--- |
+| 📺 [**01-full-walkthrough-demo.mov**](demo/01-full-walkthrough-demo.mov) | **Full Walkthrough** | Complete overview: live coding, cursor following, and sidebar panel |
+| 📺 [**02-typing-reaction-preview.mov**](demo/02-typing-reaction-preview.mov) | **Keystroke Reactions** | Real-time sprint, slash delete attack, and line-jump reactions |
+| 📺 [**03-character-selection-and-actions.mov**](demo/03-character-selection-and-actions.mov) | **Character Selection** | Live switching across **Blue Hero**, **Pink Monster**, and **White Chocobo** |
+| 📺 [**04-reaction-test-actions.mov**](demo/04-reaction-test-actions.mov) | **Test Actions Deck** | Instant manual triggers for Save, Error, Slash, Jump, Squat, and Poof |
+| 📺 [**05-sidebar-settings-customization.mov**](demo/05-sidebar-settings-customization.mov) | **Sidebar Customization** | Live sprite scaling (`16px`-`40px`), speed multiplier, and cursor switch |
+| 📺 [**06-cursor-companion-closeup.mov**](demo/06-cursor-companion-closeup.mov) | **Cursor Tracking Close-up** | 60 FPS ultra-smooth momentum physics and idle breathing loop |
+
 ## 🚀 How to Use
 
 ### 1. Opening the OPIT Dashboard
@@ -70,7 +85,7 @@ Access the companion control center from the **Activity Bar** (left sidebar):
 ### 3. Adjusting Cursor & Sizing
 - In the sidebar dashboard, adjust the **Display Size** slider to align the sprite with your editor's line height.
 - Toggle the **Show Native Cursor** switch to customize your cursor visibility.
-- Click **✨ Apply Clean Cursor Settings** to optimize your editor typography and cursor alignment.
+- Click **Apply settings** to optimize your editor typography and cursor alignment.
 
 ---
 

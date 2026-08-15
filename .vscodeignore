@@ -13,3 +13,4 @@ AGENTS.md
 CLAUDE.md
 *.vsix
 *.tsbuildinfo
+demo/**
