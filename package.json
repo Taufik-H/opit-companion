@@ -2,7 +2,7 @@
   "name": "opit-companion",
   "displayName": "OPIT Companion",
   "description": "Your tiny coding companion.",
-  "version": "0.2.9",
+  "version": "0.3.0",
   "publisher": "Taufik-H",
   "license": "MIT",
   "repository": {
@@ -61,11 +61,11 @@
       },
       {
         "command": "opit.testError",
-        "title": "OPIT: Trigger Test Error Reaction \ud83e\udd12"
+        "title": "OPIT: Trigger Test Error Reaction 🤒"
       },
       {
         "command": "opit.testSave",
-        "title": "OPIT: Trigger Test Save Reaction \ud83c\udf89"
+        "title": "OPIT: Trigger Test Save Reaction 🎉"
       },
       {
         "command": "opit.toggleEnabled",
