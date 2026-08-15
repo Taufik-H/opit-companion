@@ -12,12 +12,25 @@
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=Taufik-H.opit-companion"><img src="https://img.shields.io/visual-studio-marketplace/v/Taufik-H.opit-companion.svg?style=flat-square&color=6366f1" alt="Marketplace Version"></a>
   <a href="https://marketplace.visualstudio.com/items?itemName=Taufik-H.opit-companion"><img src="https://img.shields.io/visual-studio-marketplace/i/Taufik-H.opit-companion.svg?style=flat-square&color=34d399" alt="Installs"></a>
+  <a href="https://github.com/Taufik-H/opit-companion"><img src="https://img.shields.io/github/stars/Taufik-H/opit-companion?style=flat-square&color=eab308" alt="GitHub Stars"></a>
   <a href="https://github.com/Taufik-H/opit-companion/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License"></a>
 </p>
 
 <p align="center">
   <img src="demo/01-full-walkthrough-demo.gif" width="100%" alt="OPIT Companion Live Walkthrough" />
 </p>
+
+---
+
+## ⚡ Quick Install
+
+In VS Code or Cursor:
+1. Press `Cmd + P` (Mac) or `Ctrl + P` (Windows/Linux).
+2. Paste:
+   ```bash
+   ext install Taufik-H.opit-companion
+   ```
+3. Press **Enter**!
 
 ---
 
@@ -31,7 +44,7 @@ As you write code, OPIT stays right by your cursor—sprinting when you type fas
 
 ## ✨ Features & Action Showcase
 
-### 🏃 Keystroke & Editor Reactions
+### 🏃 1. Keystroke & Editor Reactions
 OPIT actively observes your editor actions and reacts in real time with continuous physics momentum:
 
 <p align="center">
@@ -51,7 +64,7 @@ OPIT actively observes your editor actions and reacts in real time with continuo
 
 ---
 
-### 🎭 Live Character Switching
+### 🎭 2. Live Character Switching
 Choose from distinct hero characters, each with their own theme color, personality, and animations:
 
 <p align="center">
@@ -64,7 +77,7 @@ Choose from distinct hero characters, each with their own theme color, personali
 
 ---
 
-### 🎛️ Control Deck & Customization
+### 🎛️ 3. Sleek Control Deck & Settings
 Access the companion control center from the **Activity Bar** (left sidebar):
 
 <p align="center">
@@ -75,11 +88,27 @@ Access the companion control center from the **Activity Bar** (left sidebar):
 - **Display Size Slider**: Scale your companion from subtle (16px) to bold (40px) to fit your font and line height.
 - **Animation Speed Slider**: Adjust animation tempo from chill (0.5x) to hyperactive (2.0x).
 - **Native Cursor Toggle**: Choose whether to keep the standard text cursor or let OPIT be your main cursor guide.
-- **Test Actions Panel**: One-click preview buttons to trigger save, error, slash, jump, squat, and poof animations anytime.
+- **Apply Settings**: One-click configuration calibration across all editor windows.
 
 ---
 
-### 🔍 Precision Cursor Tracking & Idle
+### 🎮 4. Instant Reaction Test Deck
+Trigger and preview animations on demand directly from the sidebar:
+
+<p align="center">
+  <img src="demo/04-reaction-test-actions.gif" width="100%" alt="Reaction Test Deck Demo" />
+</p>
+
+- **Save**: Trigger celebratory jump animation.
+- **Error**: Diagnostic dizziness reaction.
+- **Slash**: Combat weapon attack.
+- **Jump**: Vertical leap.
+- **Squat**: Cute ducking squat.
+- **Poof**: Smoke teleportation.
+
+---
+
+### 🔍 5. Precision Cursor Tracking & Idle
 60 FPS ultra-smooth momentum physics that stays locked beside your text cursor without layout jitter:
 
 <p align="center">
@@ -171,4 +200,4 @@ This project follows **Semantic Versioning (SemVer 2.0)**. Updates and releases 
 
 ## 📄 License
 
-MIT License © 2026 OPIT Companion. Built with ❤️ for coders who love a little companionship in their editor! 👾✨
+MIT License © 2026 [Taufik-H](https://github.com/Taufik-H). Built with ❤️ for coders who love a little companionship in their editor! 👾✨
