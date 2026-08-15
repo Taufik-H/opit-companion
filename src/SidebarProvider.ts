@@ -252,29 +252,28 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     }
 
     .sprite-viewport {
-      width: 36px;
-      height: 36px;
+      width: 42px;
+      height: 42px;
       overflow: hidden;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       margin-bottom: 4px;
-      border-radius: 3px;
     }
 
     .sprite-anim {
-      width: 36px;
-      height: 36px;
-      background-size: 144px 36px;
+      width: 42px;
+      height: 42px;
+      background-size: 168px 42px;
       background-repeat: no-repeat;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
-      animation: play-idle 0.68s steps(4) infinite;
+      animation: play-idle 0.68s steps(4, end) infinite;
     }
 
     @keyframes play-idle {
-      0% { background-position: 0px 0px; }
-      100% { background-position: -144px 0px; }
+      from { background-position: 0px 0px; }
+      to { background-position: -168px 0px; }
     }
 
     .char-name {
