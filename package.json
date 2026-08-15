@@ -124,7 +124,10 @@
     "vscode:prepublish": "npm run build",
     "build": "node esbuild.js",
     "watch": "node esbuild.js --watch",
-    "compile": "tsc -p ./ --noEmit"
+    "compile": "tsc -p ./ --noEmit",
+    "clean:vsix": "node -e \"const fs=require('fs'); fs.readdirSync('.').filter(f=>f.endsWith('.vsix')).forEach(f=>fs.unlinkSync(f)); console.log('Cleaned old .vsix files')\"",
+    "package": "npm run clean:vsix && npx @vscode/vsce package --no-dependencies",
+    "vsix": "npm run package"
   },
   "devDependencies": {
     "@types/node": "^18.16.0",
