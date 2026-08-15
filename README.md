@@ -103,6 +103,24 @@ You can adjust settings via the Sidebar Dashboard or directly in your `settings.
 
 ---
 
+## 🖥️ Supported Editors & IDEs
+
+OPIT Companion is engineered to deliver a consistent, delightful experience across modern development environments:
+
+| Editor / IDE | Compatibility | Supported Features |
+| :--- | :---: | :--- |
+| **Visual Studio Code** | 🟢 **Full Native** | Animated Sprite, 60 FPS Physics Engine, Sidebar Dashboard, Settings Sync |
+| **Cursor** | 🟢 **Full Native** | Seamless companion in your AI-assisted coding environment |
+| **Windsurf** | 🟢 **Full Native** | Full animation pipeline, keystroke reactions & sidebar control panel |
+| **VSCodium** | 🟢 **Full Native** | Full compatibility for 100% open-source editor setups |
+| **Trae** | 🟢 **Full Native** | Full inline sprite reactions and command support |
+| **GitHub Codespaces & Gitpod** | 🟢 **Full Web** | Live inline companion in cloud and browser workspaces |
+| **Zed Editor** | 🟡 **Settings Sync** | Automatic font size, line height, and cursor style synchronization |
+| **JetBrains (WebStorm, IntelliJ)** | 🟡 **Standards Sync** | Universal `.editorconfig` formatting and indentation standards |
+| **Neovim / Vim / Sublime Text** | 🟡 **Standards Sync** | Project-level indentation, LF newlines, and charset compliance |
+
+---
+
 ## 🏷️ Versioning & Releases
 
 This project follows **Semantic Versioning (SemVer 2.0)**. Updates and releases are categorized as:
