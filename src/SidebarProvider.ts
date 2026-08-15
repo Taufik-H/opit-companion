@@ -105,7 +105,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const variant = config.get<string>("variant", "pink");
     const displaySize = config.get<number>("displaySize", 22);
     const animationSpeed = config.get<number>("animationSpeed", 1.0);
-    const showCursor = config.get<boolean>("showCursor", true);
+    const showCursor = config.get<boolean>("showCursor", false);
 
     this._view.webview.postMessage({
       command: "syncSettings",
@@ -122,7 +122,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const currentVariant = config.get<string>("variant", "pink");
     const currentDisplaySize = config.get<number>("displaySize", 22);
     const currentAnimationSpeed = config.get<number>("animationSpeed", 1.0);
-    const currentShowCursor = config.get<boolean>("showCursor", true);
+    const currentShowCursor = config.get<boolean>("showCursor", false);
 
     return `<!DOCTYPE html>
 <html lang="en">
