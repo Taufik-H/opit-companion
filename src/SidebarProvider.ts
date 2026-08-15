@@ -42,7 +42,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           break;
         }
         case "setVariant": {
-          // Instant direct render on active editor
           this.inlineCompanion.setVariant(data.variant);
           const config = vscode.workspace.getConfiguration("opit");
           await config.update("variant", data.variant, vscode.ConfigurationTarget.Global);
@@ -51,7 +50,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         case "setDisplaySize": {
           const num = Number(data.value);
           if (!isNaN(num)) {
-            // Instant direct render on active editor
             this.inlineCompanion.setDisplaySize(num);
             const config = vscode.workspace.getConfiguration("opit");
             await config.update("displaySize", num, vscode.ConfigurationTarget.Global);
@@ -61,7 +59,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         case "setAnimationSpeed": {
           const num = Number(data.value);
           if (!isNaN(num)) {
-            // Instant direct render on active editor
             this.inlineCompanion.setAnimationSpeed(num);
             const config = vscode.workspace.getConfiguration("opit");
             await config.update("animationSpeed", num, vscode.ConfigurationTarget.Global);
@@ -81,7 +78,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         }
         case "applySettings": {
           await this.onApplySettings();
-          vscode.window.showInformationMessage("OPIT Companion: Clean cursor settings applied across all IDE windows! 👾✨");
+          vscode.window.showInformationMessage("OPIT Companion: Settings applied.");
           break;
         }
         case "refresh": {
@@ -95,7 +92,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       }
     });
 
-    // Send initial config
     this.syncCurrentConfig();
   }
 
@@ -132,15 +128,17 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   <title>OPIT Companion</title>
   <style>
     :root {
-      --bg-card: var(--vscode-sideBar-background, #1e1e2e);
-      --card-border: var(--vscode-panel-border, rgba(255, 255, 255, 0.1));
-      --text-main: var(--vscode-foreground, #e2e8f0);
-      --text-muted: var(--vscode-descriptionForeground, #94a3b8);
-      --accent: var(--vscode-focusBorder, #6366f1);
-      --button-bg: var(--vscode-button-background, #4f46e5);
-      --button-fg: var(--vscode-button-foreground, #ffffff);
-      --button-hover: var(--vscode-button-hoverBackground, #4338ca);
-      --font-family: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+      --bg: var(--vscode-sideBar-background, #18181b);
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-hover: rgba(255, 255, 255, 0.08);
+      --border: var(--vscode-panel-border, rgba(255, 255, 255, 0.08));
+      --border-focus: var(--vscode-focusBorder, #6366f1);
+      --text: var(--vscode-foreground, #f4f4f5);
+      --text-muted: var(--vscode-descriptionForeground, #a1a1aa);
+      --btn-bg: var(--vscode-button-background, #4f46e5);
+      --btn-fg: var(--vscode-button-foreground, #ffffff);
+      --btn-hover: var(--vscode-button-hoverBackground, #4338ca);
+      --font-mono: var(--vscode-editor-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
     }
 
     * {
@@ -151,121 +149,122 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     }
 
     body {
-      font-family: var(--font-family);
-      color: var(--text-main);
+      font-family: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+      color: var(--text);
       background: transparent;
-      padding: 12px;
+      padding: 12px 10px;
       line-height: 1.4;
-      font-size: 12px;
+      font-size: 11px;
     }
 
+    /* ─── Header ─── */
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
     }
 
     .header-title {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 0.5px;
-    }
-
-    .header-tag {
-      background: rgba(99, 102, 241, 0.2);
-      color: #818cf8;
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 600;
-      border: 1px solid rgba(99, 102, 241, 0.4);
-    }
-
-    .section-title {
       font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
+      font-weight: 700;
       letter-spacing: 0.8px;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      text-transform: uppercase;
+      color: var(--text);
     }
 
-    /* ─── Dynamic Scalable Horizontal Character Grid (Ke Kanan) ─── */
+    .header-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9.5px;
+      font-family: var(--font-mono);
+      color: #34d399;
+      background: rgba(52, 211, 153, 0.08);
+      padding: 1px 5px;
+      border-radius: 3px;
+      border: 1px solid rgba(52, 211, 153, 0.15);
+    }
+
+    .header-status-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #34d399;
+    }
+
+    /* ─── Section Label ─── */
+    .section-label {
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    /* ─── Character Grid ─── */
     .char-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
-      gap: 8px;
-      margin-bottom: 16px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 14px;
     }
 
     .char-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 8px 4px 6px 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 4px;
       display: flex;
       flex-direction: column;
       align-items: center;
       cursor: pointer;
       position: relative;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow: hidden;
+      transition: all 0.15s ease;
     }
 
     .char-card:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.25);
-      transform: translateY(-2px);
+      background: var(--surface-hover);
+      border-color: rgba(255, 255, 255, 0.18);
     }
 
     .char-card.active {
-      border-color: var(--card-accent, #6366f1);
-      background: var(--card-glow, rgba(99, 102, 241, 0.15));
-      box-shadow: 0 0 12px var(--card-glow, rgba(99, 102, 241, 0.3));
+      border-color: var(--card-accent, var(--border-focus));
+      background: rgba(255, 255, 255, 0.06);
     }
 
-    .char-card.active::before {
-      content: "✓";
+    .char-indicator {
+      display: none;
       position: absolute;
-      top: 4px;
-      right: 4px;
-      width: 14px;
-      height: 14px;
-      background: var(--card-accent, #6366f1);
-      color: #fff;
-      font-size: 9px;
-      font-weight: bold;
+      top: 3px;
+      right: 3px;
+      width: 4px;
+      height: 4px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
+      background: var(--card-accent, var(--border-focus));
+    }
+
+    .char-card.active .char-indicator {
+      display: block;
     }
 
     .sprite-viewport {
-      width: 42px;
-      height: 42px;
+      width: 36px;
+      height: 36px;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      margin-bottom: 6px;
-      position: relative;
+      margin-bottom: 4px;
+      border-radius: 3px;
     }
 
-    /* Continuous CSS Step Animation from idle.png (4 frames of 42px = 168px) */
     .sprite-anim {
-      width: 42px;
-      height: 42px;
+      width: 36px;
+      height: 36px;
       background-repeat: no-repeat;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
@@ -273,80 +272,62 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     }
 
     @keyframes play-idle {
-      0% {
-        background-position: 0px 0px;
-      }
-      100% {
-        background-position: -168px 0px;
-      }
-    }
-
-    .char-info {
-      text-align: center;
-      width: 100%;
+      0% { background-position: 0px 0px; }
+      100% { background-position: -144px 0px; }
     }
 
     .char-name {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-main);
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      max-width: 100%;
+      text-align: center;
     }
 
-    .char-badge {
-      font-size: 9px;
-      color: var(--text-muted);
-      margin-top: 1px;
-    }
-
-    /* ─── Settings Controls ─── */
-    .control-group {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 10px;
+    /* ─── Configuration Deck ─── */
+    .config-deck {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 8px 10px;
       margin-bottom: 14px;
-    }
-
-    .control-row {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      margin-bottom: 10px;
+      gap: 8px;
     }
 
-    .control-row:last-child {
-      margin-bottom: 0;
+    .config-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
     }
 
-    .control-label-row {
+    .config-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .control-label {
-      font-size: 11px;
-      color: var(--text-main);
+    .config-title {
+      font-size: 10.5px;
       font-weight: 500;
+      color: var(--text);
     }
 
-    .control-val {
-      font-size: 11px;
+    .config-badge {
+      font-size: 9.5px;
+      font-family: var(--font-mono);
       color: var(--text-muted);
-      font-family: monospace;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 1px 5px;
-      border-radius: 3px;
     }
 
     input[type="range"] {
       width: 100%;
-      height: 4px;
+      height: 3px;
       border-radius: 2px;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.12);
       outline: none;
       -webkit-appearance: none;
       cursor: pointer;
@@ -354,20 +335,19 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      background: var(--accent);
+      background: var(--text);
       cursor: pointer;
-      box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
     }
 
-    /* ─── Sleek Modern Switch for Show/Hide Cursor ─── */
+    /* ─── Switch ─── */
     .switch {
       position: relative;
       display: inline-block;
-      width: 32px;
-      height: 18px;
+      width: 26px;
+      height: 14px;
     }
 
     .switch input {
@@ -383,95 +363,102 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: rgba(255, 255, 255, 0.18);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: 18px;
+      background-color: rgba(255, 255, 255, 0.15);
+      transition: background-color 0.15s ease;
+      border-radius: 14px;
     }
 
     .switch-slider:before {
       position: absolute;
       content: "";
-      height: 14px;
-      width: 14px;
+      height: 10px;
+      width: 10px;
       left: 2px;
       bottom: 2px;
       background-color: #ffffff;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.15s ease;
       border-radius: 50%;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
     }
 
     .switch input:checked + .switch-slider {
-      background-color: var(--accent);
+      background-color: var(--btn-bg);
     }
 
     .switch input:checked + .switch-slider:before {
-      transform: translateX(14px);
+      transform: translateX(12px);
     }
 
-    /* ─── Action & Reaction Buttons ─── */
-    .btn-grid {
+    /* ─── Actions Grid ─── */
+    .actions-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
       margin-bottom: 12px;
     }
 
-    .btn {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-main);
-      border: 1px solid var(--card-border);
-      border-radius: 5px;
-      padding: 6px 8px;
+    .action-btn {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 0;
+      font-size: 10px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.12s ease;
+    }
+
+    .action-btn:hover {
+      background: var(--surface-hover);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .action-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* ─── Apply Button ─── */
+    .apply-btn {
+      background: var(--btn-bg);
+      color: var(--btn-fg);
+      border: 1px solid transparent;
+      border-radius: 4px;
+      width: 100%;
+      padding: 7px 10px;
       font-size: 11px;
       font-weight: 500;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      transition: all 0.15s ease;
+      gap: 6px;
+      transition: background-color 0.15s ease;
     }
 
-    .btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.25);
+    .apply-btn:hover {
+      background: var(--btn-hover);
     }
 
-    .btn:active {
-      transform: scale(0.97);
-    }
-
-    .btn-primary {
-      background: var(--button-bg);
-      color: var(--button-fg);
-      border: none;
-      width: 100%;
-      padding: 8px;
-      font-weight: 600;
-      border-radius: 6px;
-    }
-
-    .btn-primary:hover {
-      background: var(--button-hover);
+    .apply-btn:active {
+      transform: translateY(1px);
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <div class="header-title">
-      <span>👾</span>
-      <span>OPIT Companion</span>
-    </div>
-    <span class="header-tag">Live 60 FPS</span>
+    <span class="header-title">OPIT Companion</span>
+    <span class="header-status">
+      <span class="header-status-dot"></span>
+      Active
+    </span>
   </div>
 
-  <div class="section-title">
-    <span>Choose Companion</span>
-    <span style="font-size: 9px; opacity: 0.7;">Grid (→)</span>
+  <div class="section-label">
+    <span>Companion</span>
   </div>
 
-  <!-- Scalable Dynamic Grid of Character Cards with Animated idle.png -->
   <div class="char-grid" id="charGrid">
     ${characters
       .map(
@@ -479,33 +466,30 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       <div 
         class="char-card ${c.id === currentVariant ? "active" : ""}" 
         data-variant="${c.id}"
-        style="--card-accent: ${c.color}; --card-glow: ${c.bgGlow};"
+        style="--card-accent: ${c.color};"
         onclick="selectVariant('${c.id}')"
-        title="Select ${c.name} (${c.badge})"
+        title="${c.name}"
       >
+        <span class="char-indicator"></span>
         <div class="sprite-viewport">
           <div class="sprite-anim" style="background-image: url('${c.base64Idle}');"></div>
         </div>
-        <div class="char-info">
-          <div class="char-name">${c.name}</div>
-          <div class="char-badge">${c.badge}</div>
-        </div>
+        <div class="char-name">${c.name}</div>
       </div>
     `
       )
       .join("")}
   </div>
 
-  <div class="section-title">
+  <div class="section-label">
     <span>Configuration</span>
   </div>
 
-  <div class="control-group">
-    <!-- Show/Hide Native Cursor Switch -->
-    <div class="control-row">
-      <div class="control-label-row">
-        <span class="control-label">Show Native Cursor</span>
-        <label class="switch" title="Toggle native editor cursor visibility">
+  <div class="config-deck">
+    <div class="config-row">
+      <div class="config-header-row">
+        <span class="config-title">Native Cursor</span>
+        <label class="switch" title="Toggle native editor text cursor">
           <input 
             type="checkbox" 
             id="cursorToggle" 
@@ -517,32 +501,32 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       </div>
     </div>
 
-    <div class="control-row">
-      <div class="control-label-row">
-        <span class="control-label">Display Size</span>
-        <span class="control-val" id="sizeVal">${currentDisplaySize}px</span>
+    <div class="config-row">
+      <div class="config-header-row">
+        <span class="config-title">Display Size</span>
+        <span class="config-badge" id="sizeVal">${currentDisplaySize}px</span>
       </div>
       <input 
         type="range" 
         id="sizeSlider" 
         min="16" 
-        max="48" 
+        max="40" 
         step="1" 
         value="${currentDisplaySize}"
         oninput="updateDisplaySize(this.value)"
       />
     </div>
 
-    <div class="control-row">
-      <div class="control-label-row">
-        <span class="control-label">Animation Speed</span>
-        <span class="control-val" id="speedVal">${currentAnimationSpeed.toFixed(1)}x</span>
+    <div class="config-row">
+      <div class="config-header-row">
+        <span class="config-title">Animation Speed</span>
+        <span class="config-badge" id="speedVal">${currentAnimationSpeed.toFixed(1)}x</span>
       </div>
       <input 
         type="range" 
         id="speedSlider" 
         min="0.5" 
-        max="2.5" 
+        max="2.0" 
         step="0.1" 
         value="${currentAnimationSpeed}"
         oninput="updateSpeed(this.value)"
@@ -550,27 +534,25 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     </div>
   </div>
 
-  <div class="section-title">
-    <span>Test Reactions</span>
+  <div class="section-label">
+    <span>Test Actions</span>
   </div>
 
-  <div class="btn-grid">
-    <button class="btn" onclick="testReaction('save')">🎉 Save</button>
-    <button class="btn" onclick="testReaction('error')">🤒 Error</button>
-    <button class="btn" onclick="testReaction('delete')">⚔️ Slash</button>
-    <button class="btn" onclick="testReaction('jump')">🦘 Jump</button>
-    <button class="btn" onclick="testReaction('stuck_down')">⬇️ Squat</button>
-    <button class="btn" onclick="testReaction('teleport')">💨 Poof</button>
+  <div class="actions-grid">
+    <button class="action-btn" onclick="testReaction('save')">Save</button>
+    <button class="action-btn" onclick="testReaction('error')">Error</button>
+    <button class="action-btn" onclick="testReaction('delete')">Slash</button>
+    <button class="action-btn" onclick="testReaction('jump')">Jump</button>
+    <button class="action-btn" onclick="testReaction('stuck_down')">Squat</button>
+    <button class="action-btn" onclick="testReaction('teleport')">Poof</button>
   </div>
 
-  <button class="btn btn-primary" onclick="applySettings()" style="margin-top: 4px;">
-    ✨ Apply Clean Cursor Settings
+  <button class="apply-btn" onclick="applySettings()">
+    Apply settings
   </button>
 
   <script>
     const vscode = acquireVsCodeApi();
-
-    // Signal ready immediately to sync configuration
     vscode.postMessage({ command: 'ready' });
 
     function selectVariant(variant) {
