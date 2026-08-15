@@ -1,4 +1,8 @@
-# 👾 OPIT Companion
+<p align="center">
+  <img src="assets/icon.png" width="128" height="128" alt="OPIT Companion Logo" />
+</p>
+
+<h1 align="center">👾 OPIT Companion</h1>
 
 > **Your Tiny Coding Companion**  
 > A lively pixel-art companion that lives inside your code editor, reacting dynamically to every keystroke, shortcut, and error right beside your cursor.
