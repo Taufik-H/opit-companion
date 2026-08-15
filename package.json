@@ -2,7 +2,7 @@
   "name": "opit-companion",
   "displayName": "OPIT Companion",
   "description": "Your tiny coding companion.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "opit",
   "engines": {
     "vscode": "^1.80.0"
@@ -74,9 +74,9 @@
         },
         "opit.animationSpeed": {
           "type": "number",
-          "default": 1.0,
+          "default": 1,
           "minimum": 0.5,
-          "maximum": 3.0,
+          "maximum": 3,
           "description": "Speed multiplier for OPIT animations."
         },
         "opit.displaySize": {
