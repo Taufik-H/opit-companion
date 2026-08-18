@@ -48,15 +48,15 @@ export class InlineCompanion {
     private readonly extensionUri: vscode.Uri,
     characterRegistry?: CharacterRegistry
   ) {
-    // Top Z-Index Layering: z-index 99999 ensures character renders ON TOP of text tokens!
+    // Absolute Baseline Anchoring: position absolute out-of-flow ensures line height NEVER stretches!
     this.decorationType = vscode.window.createTextEditorDecorationType({
       after: {
-        textDecoration: "none; position: relative; z-index: 99999; pointer-events: none;",
+        textDecoration: "none; position: absolute; bottom: 0; z-index: 99999; pointer-events: none;",
       },
     });
     this.teleportDepartDecorationType = vscode.window.createTextEditorDecorationType({
       after: {
-        textDecoration: "none; position: relative; z-index: 99999; pointer-events: none;",
+        textDecoration: "none; position: absolute; bottom: 0; z-index: 99999; pointer-events: none;",
       },
     });
 

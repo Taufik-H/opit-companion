@@ -311,28 +311,18 @@ export class SpriteRenderer {
   public getMarginString(
     frameWidth: number,
     frameHeight: number,
-    editorLineHeight: number = 20,
+    _editorLineHeight: number = 20,
     dir: 1 | -1 = 1,
     asymmetryX: number = 0
   ): string {
     const scale = this.displaySize / frameHeight;
-    const renderWidth = Math.round(frameWidth * scale);
-    const renderHeight = Math.round(frameHeight * scale);
-
-    // Dynamic Baseline Compensation:
-    // When renderHeight > editorLineHeight, offset upwards by the difference
-    // so the character expands upwards and feet remain anchored to the text baseline.
-    const baselineOverflow = Math.max(0, renderHeight - editorLineHeight);
-    const topOffset = -baselineOverflow - Math.round(2 * scale);
 
     if (dir === -1 && asymmetryX !== 0) {
       const shiftX = Math.round(asymmetryX * scale);
-      const marginLeft = -shiftX;
-      const marginRight = -(renderWidth - shiftX);
-      return `${topOffset}px ${marginRight}px 0 ${marginLeft}px`;
+      return `0 0 0 ${-shiftX}px`;
     }
 
-    return `${topOffset}px ${-renderWidth}px 0 0px`;
+    return "0";
   }
 }
 
