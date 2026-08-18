@@ -38,6 +38,8 @@ export class InlineCompanion {
   // Render deduplication cache
   private lastRenderKey: string = "";
   private lastActiveEditor: vscode.TextEditor | undefined;
+  private cachedUriString: string = "";
+  private cachedEffectiveLineHeight: number = 20;
 
   // Modular components
   private renderer: SpriteRenderer;
@@ -138,6 +140,8 @@ export class InlineCompanion {
     this.animationSpeed = config.get<number>("animationSpeed", 1.0);
     const displaySize = config.get<number>("displaySize", 22);
 
+    this.cachedEffectiveLineHeight = 0;
+    this.cachedUriString = "";
     this.cancelIdleCombo();
     this.renderer.updateSettings(displaySize, this.animationSpeed);
     this.renderer.clearCache();
@@ -430,8 +434,18 @@ export class InlineCompanion {
       return;
     }
 
-    const { info, oneShot, reverse } = this.getCurrentSpriteState();
+    const activePosition = editor.selection.active;
     const currentDir = this.directionManager.get();
+    const comboKey = this.isPlayingIdleCombo ? `combo:${this.idleComboStepIndex}` : "";
+    const renderKey = `${editor.document.uri.toString()}:${activePosition.line}:${activePosition.character}:${this.currentState}:${currentDir}:${this.renderer.getDisplaySize()}:${comboKey}`;
+
+    // Fast-path early exit: skip identical renders instantly (0ms latency, zero GC)
+    if (!force && renderKey === this.lastRenderKey) {
+      return;
+    }
+    this.lastRenderKey = renderKey;
+
+    const { info, oneShot, reverse } = this.getCurrentSpriteState();
 
     const svgUri = this.renderer.getSpriteSvgUri(
       this.currentVariant,
@@ -448,34 +462,28 @@ export class InlineCompanion {
     );
     if (!svgUri) return;
 
-    const activePosition = editor.selection.active;
     const { width: renderWidth, height: renderHeight } = this.renderer.getRenderDimensions(
       info.frameWidth,
       info.frameHeight
     );
 
-    // Dynamically detect editor line height & font size for pixel-perfect baseline tracking
-    const editorConfig = vscode.workspace.getConfiguration("editor", editor.document.uri);
-    const fontSize = editorConfig.get<number>("fontSize", 14);
-    const rawLineHeight = editorConfig.get<number>("lineHeight", 0);
-    const effectiveLineHeight = rawLineHeight > 0 ? rawLineHeight : Math.round(fontSize * 1.4);
+    // Cached line-height detection to eliminate redundant getConfiguration calls during typing
+    if (this.cachedUriString !== editor.document.uri.toString() || this.cachedEffectiveLineHeight <= 0) {
+      const editorConfig = vscode.workspace.getConfiguration("editor", editor.document.uri);
+      const fontSize = editorConfig.get<number>("fontSize", 14);
+      const rawLineHeight = editorConfig.get<number>("lineHeight", 0);
+      this.cachedEffectiveLineHeight = rawLineHeight > 0 ? rawLineHeight : Math.round(fontSize * 1.4);
+      this.cachedUriString = editor.document.uri.toString();
+    }
 
     const asymmetryX = this.characterRegistry.getAsymmetryX(this.currentVariant);
     const marginStr = this.renderer.getMarginString(
       info.frameWidth,
       info.frameHeight,
-      effectiveLineHeight,
+      this.cachedEffectiveLineHeight,
       currentDir,
       asymmetryX
     );
-
-    // Deduplication — skip identical renders (include combo step for uniqueness)
-    const comboKey = this.isPlayingIdleCombo ? `combo:${this.idleComboStepIndex}` : "";
-    const renderKey = `${editor.document.uri.toString()}:${activePosition.line}:${activePosition.character}:${this.currentState}:${this.directionManager.get()}:${renderWidth}:${comboKey}`;
-    if (!force && renderKey === this.lastRenderKey) {
-      return;
-    }
-    this.lastRenderKey = renderKey;
 
     // Universal Smoke Poof: Depart animation at previous position
     if (this.isTeleporting && this.teleportPreviousPos) {

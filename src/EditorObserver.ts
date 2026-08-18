@@ -35,6 +35,7 @@ export class EditorObserver {
   private idleTimer: NodeJS.Timeout | null = null;
   private lastTypeTime: number = 0;
   private lastDeleteTime: number = 0;
+  private lastEnterTime: number = 0;
   private previousLine: number = 0;
   private previousChar: number = 0;
   private onStateChangeCallback: StateChangeCallback;
@@ -53,7 +54,6 @@ export class EditorObserver {
         if (!e.contentChanges.length) return;
 
         const now = Date.now();
-        this.lastTypeTime = now;
 
         let isEnter = false;
         let hasDeletion = false;
@@ -72,6 +72,8 @@ export class EditorObserver {
         }
 
         if (isEnter) {
+          this.lastEnterTime = now;
+          this.lastTypeTime = now;
           this.emitState("enter", true);
           this.resetIdleTimer(300);
         } else if (hasDeletion) {
@@ -81,6 +83,7 @@ export class EditorObserver {
           this.resetIdleTimer(350);
         } else if (totalInserted > 0) {
           // Typing uses walk.png
+          this.lastTypeTime = now;
           this.emitState("typing", true);
           this.resetIdleTimer(150);
         }
@@ -104,10 +107,12 @@ export class EditorObserver {
           this.emitState("teleport", true, { previousPos, newPos: activePos });
           this.resetIdleTimer(500);
         } else if (lineDelta !== 0 || charDelta !== 0) {
-          // If a deletion event occurred within 250ms, keep "delete" state (attack.png) instead of overwriting with arrow_left
+          // Guard: if typing, deleting, or enter occurred recently, preserve action animation instead of overwriting with arrow keys
           const isRecentDelete = now - this.lastDeleteTime < 250;
+          const isRecentType = now - this.lastTypeTime < 250;
+          const isRecentEnter = now - this.lastEnterTime < 350;
 
-          if (!isRecentDelete) {
+          if (!isRecentDelete && !isRecentType && !isRecentEnter) {
             if (lineDelta < 0) {
               this.emitState("arrow_up", true);
               this.resetIdleTimer(540);
@@ -161,6 +166,12 @@ export class EditorObserver {
     // 5. Diagnostic / Linter Error Event
     context.subscriptions.push(
       vscode.languages.onDidChangeDiagnostics(() => {
+        const now = Date.now();
+        // Do not interrupt active typing, deleting, or navigation with error reactions
+        if (now - this.lastTypeTime < 1500 || now - this.lastDeleteTime < 1500) {
+          return;
+        }
+
         if (this.hasActiveError()) {
           this.emitState("error");
           this.resetIdleTimer(2500);
@@ -178,11 +189,7 @@ export class EditorObserver {
   }
 
   public evaluateCurrentState() {
-    if (this.hasActiveError()) {
-      this.emitState("error");
-    } else {
-      this.emitState("idle");
-    }
+    this.emitState("idle");
   }
 
   public hasActiveError(): boolean {

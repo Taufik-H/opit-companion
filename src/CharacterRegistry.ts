@@ -76,7 +76,7 @@ const ACTION_FALLBACK_MAP: Record<string, string> = {
   jump: "arrow_up",
   climb: "arrow_down",
   stuck_down: "arrow_down",
-  stuck_left: "error",
+  stuck_left: "arrow_horizontal",
   teleport: "mouse_teleport",
   teleport_depart: "mouse_teleport",
   delete: "backspace",
@@ -227,6 +227,7 @@ export class CharacterRegistry {
   private previewCache: Map<string, string> = new Map();
   private idleCombosCache: Map<string, ResolvedSpriteAction[]> = new Map();
   private asymmetryXCache: Map<string, number> = new Map();
+  private resolvedActionCache: Map<string, ResolvedSpriteAction> = new Map();
   private defaultCharacterId: string = "pink";
 
   constructor(private readonly extensionUri: vscode.Uri) {
@@ -241,6 +242,7 @@ export class CharacterRegistry {
     this.previewCache.clear();
     this.idleCombosCache.clear();
     this.asymmetryXCache.clear();
+    this.resolvedActionCache.clear();
 
     const assetsDir = path.join(this.extensionUri.fsPath, "assets");
     if (!fs.existsSync(assetsDir)) {
@@ -440,6 +442,11 @@ export class CharacterRegistry {
    * 3. Tier 1 root fallback: 'idle'
    */
   public resolveAction(variant: string, actionName: string): ResolvedSpriteAction {
+    const cacheKey = `${variant}/${actionName}`;
+    if (this.resolvedActionCache.has(cacheKey)) {
+      return this.resolvedActionCache.get(cacheKey)!;
+    }
+
     const char = this.getCharacter(variant);
     const frameWidth = char?.frameWidth ?? 42;
     const frameHeight = char?.frameHeight ?? 42;
@@ -473,14 +480,20 @@ export class CharacterRegistry {
 
     // Tier 3: Specific action requested
     let resolved = checkAction(actionName);
-    if (resolved) return resolved;
+    if (resolved) {
+      this.resolvedActionCache.set(cacheKey, resolved);
+      return resolved;
+    }
 
     // Normalize action alias if needed (e.g. delete -> backspace, save -> shortcut_save)
     let currentKey = actionName;
     while (ACTION_FALLBACK_MAP[currentKey]) {
       currentKey = ACTION_FALLBACK_MAP[currentKey];
       resolved = checkAction(currentKey);
-      if (resolved) return resolved;
+      if (resolved) {
+        this.resolvedActionCache.set(cacheKey, resolved);
+        return resolved;
+      }
     }
 
     // Default fallback values if not in manifest actions map
@@ -491,13 +504,15 @@ export class CharacterRegistry {
         const dim = getPngDimensions(filePath);
         const actualFrames = dim ? Math.max(1, Math.round(dim.width / frameWidth)) : def.frames;
         const actualHeight = dim ? dim.height : frameHeight;
-        return {
+        const result: ResolvedSpriteAction = {
           filename: def.file,
           frames: actualFrames,
           duration: def.duration,
           frameWidth,
           frameHeight: actualHeight,
         };
+        this.resolvedActionCache.set(cacheKey, result);
+        return result;
       }
     }
 
@@ -514,12 +529,14 @@ export class CharacterRegistry {
         actualIdleHeight = dim.height;
       }
     }
-    return {
+    const fallbackIdle: ResolvedSpriteAction = {
       filename: idleFile,
       frames: idleFrames,
       duration: idleAct.duration || 0.68,
       frameWidth,
       frameHeight: actualIdleHeight,
     };
+    this.resolvedActionCache.set(cacheKey, fallbackIdle);
+    return fallbackIdle;
   }
 }

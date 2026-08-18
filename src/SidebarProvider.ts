@@ -363,6 +363,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       background-repeat: no-repeat;
       image-rendering: pixelated;
       image-rendering: crisp-edges;
+      animation-play-state: paused;
+    }
+
+    .char-card:hover .sprite-anim,
+    .char-card.active .sprite-anim {
+      animation-play-state: running;
     }
 
     .char-name {
@@ -516,32 +522,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       transform: translateY(1px);
     }
 
-    /* ─── Apply Button ─── */
-    .apply-btn {
-      background: var(--btn-bg);
-      color: var(--btn-fg);
-      border: 1px solid transparent;
-      border-radius: 4px;
-      width: 100%;
-      padding: 7px 10px;
-      font-size: 11px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: background-color 0.15s ease;
-    }
-
-    .apply-btn:hover {
-      background: var(--btn-hover);
-    }
-
-    .apply-btn:active {
-      transform: translateY(1px);
-    }
-
     ${dynamicKeyframes}
   </style>
 </head>
@@ -675,7 +655,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   </div>
 
   <div class="section-label">
-    <span>Test Actions</span>
+    <span>Demo</span>
   </div>
 
   <div class="actions-grid">
@@ -686,10 +666,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     <button class="action-btn" onclick="testReaction('stuck_down')">Squat</button>
     <button class="action-btn" onclick="testReaction('teleport')">Poof</button>
   </div>
-
-  <button class="apply-btn" onclick="applySettings()">
-    Apply settings
-  </button>
 
   <script>
     const vscode = acquireVsCodeApi();
@@ -767,10 +743,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     function testReaction(state) {
       vscode.postMessage({ command: 'testReaction', state: state });
-    }
-
-    function applySettings() {
-      vscode.postMessage({ command: 'applySettings' });
     }
 
     window.addEventListener('message', event => {
