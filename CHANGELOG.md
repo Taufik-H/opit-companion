@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [0.3.2] - 2026-08-18
+## [0.3.3] - 2026-08-18
 
 ### Fixed
 - **Seamless Typing Flow**: Fixed an issue where typing quickly or inserting new lines could trigger unexpected hurt or crouch animations. Character locomotion and typing animations now remain smooth and uninterrupted.
